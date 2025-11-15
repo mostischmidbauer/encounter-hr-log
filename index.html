@@ -139,6 +139,18 @@
       display: block;
       margin-bottom: 0.25rem;
     }
+    .liveness-value {
+      font-weight: 600;
+    }
+    .liveness-pass {
+      color: #16a34a;
+    }
+    .liveness-borderline {
+      color: #d97706;
+    }
+    .liveness-suspicious {
+      color: #dc2626;
+    }
     @media (max-width: 600px) {
       body {
         padding: 0.75rem;
@@ -347,6 +359,36 @@
         </div>
       </fieldset>
 
+      <!-- LIVENESS / ANTI-DEEPFAKE -->
+      <fieldset>
+        <legend id="txtLivenessLegend">Liveness / Anti-Deepfake (Prototype)</legend>
+        <p id="txtLivenessInfo" class="meta">
+          Uses multiple facial regions and signal quality to compute a simple liveness score. Prototype only – not a certified anti-fraud system.
+        </p>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~30s)</button>
+        </div>
+        <div class="grid" style="margin-top:0.75rem;">
+          <div>
+            <label id="lblLivenessScore">Liveness score (0–100)</label>
+            <div id="livenessScoreValue" class="meta liveness-value">–</div>
+          </div>
+          <div>
+            <label id="lblLivenessHr">HR during liveness check</label>
+            <div id="livenessHrValue" class="meta">–</div>
+          </div>
+          <div>
+            <label id="lblSignalQuality">Signal quality</label>
+            <div id="signalQualityValue" class="meta">–</div>
+          </div>
+          <div>
+            <label id="lblRoiCorrelation">ROI correlation</label>
+            <div id="roiCorrelationValue" class="meta">–</div>
+          </div>
+        </div>
+        <p id="livenessConclusion" class="meta"></p>
+      </fieldset>
+
       <!-- FORM ACTIONS -->
       <div class="actions">
         <button type="submit" class="btn-primary" id="btnSaveEncounter">Save Encounter</button>
@@ -447,6 +489,21 @@
         hrStatusIdle: "Status: Camera not started.",
         cameraStarted: "Status: Camera started. Position face in center, good lighting.",
 
+        // Liveness
+        livenessLegend: "Liveness / Anti-Deepfake (Prototype)",
+        livenessInfo:
+          "Uses multiple facial regions and signal quality to compute a simple liveness score. Prototype only – not a certified anti-fraud system.",
+        livenessRunBtn: "Run Liveness Check (~30s)",
+        livenessScoreLabel: "Liveness score (0–100)",
+        livenessHrLabel: "HR during liveness check",
+        signalQualityLabel: "Signal quality",
+        roiCorrelationLabel: "ROI correlation",
+        livenessCameraNeeded: "Status: Start the camera before running a liveness check.",
+        livenessRunningStatus: "Status: Liveness check running… stay still (~30s).",
+        livenessConclusionPass: "Liveness PASS – strong signs of a live human video stream (still not a formal identity check).",
+        livenessConclusionBorderline: "Liveness BORDERLINE – mixed signal quality; treat with caution and verify via additional methods.",
+        livenessConclusionFail: "Liveness SUSPICIOUS – weak or inconsistent physiological signal; high risk of artefact or non-live video.",
+
         btnSaveEncounter: "Save Encounter",
         btnResetForm: "Reset Form",
         txtRecordedEncounters: "Recorded Encounters",
@@ -542,6 +599,21 @@
         hrStatusIdle: "Status: Kamera noch nicht gestartet.",
         cameraStarted: "Status: Kamera gestartet. Gesicht zentrieren, gute Beleuchtung.",
 
+        // Liveness
+        livenessLegend: "Liveness / Anti-Deepfake (Prototyp)",
+        livenessInfo:
+          "Verwendet mehrere Gesichtsregionen und Signalqualität zur Berechnung eines einfachen Liveness-Scores. Nur Prototyp – kein zertifiziertes Anti-Fraud-System.",
+        livenessRunBtn: "Liveness-Check starten (~30 s)",
+        livenessScoreLabel: "Liveness-Score (0–100)",
+        livenessHrLabel: "HF während Liveness-Check",
+        signalQualityLabel: "Signalqualität",
+        roiCorrelationLabel: "ROI-Korrelation",
+        livenessCameraNeeded: "Status: Bitte zuerst die Kamera starten, bevor ein Liveness-Check durchgeführt wird.",
+        livenessRunningStatus: "Status: Liveness-Check läuft … bitte ~30 s ruhig sitzen bleiben.",
+        livenessConclusionPass: "Liveness PASS – starke Hinweise auf einen echten, lebenden Videostream (trotzdem keine formale Identitätsprüfung).",
+        livenessConclusionBorderline: "Liveness GRENZFALL – gemischte Signalqualität; vorsichtig interpretieren und zusätzliche Prüfungen nutzen.",
+        livenessConclusionFail: "Liveness VERDÄCHTIG – schwaches oder inkonsistentes physiologisches Signal; hohes Risiko für Artefakte oder nicht-live Video.",
+
         btnSaveEncounter: "Begegnung speichern",
         btnResetForm: "Formular zurücksetzen",
         txtRecordedEncounters: "Gespeicherte Begegnungen",
@@ -636,6 +708,21 @@
         measureHcpHrBtn: "Medir FC profesional (~20 s)",
         hrStatusIdle: "Estado: Cámara no iniciada.",
         cameraStarted: "Estado: Cámara iniciada. Coloque la cara en el centro, con buena luz.",
+
+        // Liveness
+        livenessLegend: "Liveness / Anti-Deepfake (Prototipo)",
+        livenessInfo:
+          "Utiliza varias regiones faciales y la calidad de la señal para calcular un score simple de liveness. Solo prototipo – no es un sistema antifraude certificado.",
+        livenessRunBtn: "Ejecutar Liveness Check (~30 s)",
+        livenessScoreLabel: "Score de liveness (0–100)",
+        livenessHrLabel: "FC durante liveness check",
+        signalQualityLabel: "Calidad de la señal",
+        roiCorrelationLabel: "Correlación de ROIs",
+        livenessCameraNeeded: "Estado: Inicie la cámara antes de ejecutar el liveness check.",
+        livenessRunningStatus: "Estado: Liveness check en curso… permanezca quieto (~30 s).",
+        livenessConclusionPass: "Liveness PASS – fuertes indicios de una transmisión de vídeo humana y en vivo (aun así, no es una verificación formal de identidad).",
+        livenessConclusionBorderline: "Liveness LIMÍTROFE – calidad de señal mixta; interpretar con cautela y confirmar por otros medios.",
+        livenessConclusionFail: "Liveness SOSPECHOSO – señal fisiológica débil o inconsistente; alto riesgo de artefacto o vídeo no en vivo.",
 
         btnSaveEncounter: "Guardar encuentro",
         btnResetForm: "Reiniciar formulario",
@@ -753,12 +840,19 @@
       document.getElementById("measureHcpHrBtn").textContent = t.measureHcpHrBtn;
       document.getElementById("hrStatus").textContent = t.hrStatusIdle;
 
-      // Table headings & footer labels
-      document.getElementById("btnSaveEncounter").textContent = t.btnSaveEncounter;
-      document.getElementById("resetFormBtn").textContent = t.btnResetForm;
-      document.getElementById("txtRecordedEncounters").textContent = t.txtRecordedEncounters;
-      document.getElementById("exportCsvBtn").textContent = t.exportCsvBtn;
-      document.getElementById("clearAllBtn").textContent = t.clearAllBtn;
+      // Liveness
+      document.getElementById("txtLivenessLegend").textContent = t.livenessLegend;
+      const livInfo = document.getElementById("txtLivenessInfo");
+      livInfo.innerHTML = "";
+      t.livenessInfo.split("\n").forEach((line, idx) => {
+        if (idx > 0) livInfo.appendChild(document.createElement("br"));
+        livInfo.appendChild(document.createTextNode(line));
+      });
+      document.getElementById("runLivenessBtn").textContent = t.livenessRunBtn;
+      document.getElementById("lblLivenessScore").textContent = t.livenessScoreLabel;
+      document.getElementById("lblLivenessHr").textContent = t.livenessHrLabel;
+      document.getElementById("lblSignalQuality").textContent = t.signalQualityLabel;
+      document.getElementById("lblRoiCorrelation").textContent = t.roiCorrelationLabel;
 
       // Footer
       document.getElementById("txtFooterTitle").textContent = t.footerTitle;
@@ -766,22 +860,20 @@
       document.getElementById("txtFooterContact").textContent = t.footerContact;
       document.getElementById("txtFooterDisclaimer").textContent = t.footerDisclaimer;
 
-      // Re-render table (labels + count text)
+      // Buttons & headings
+      document.getElementById("btnSaveEncounter").textContent = t.btnSaveEncounter;
+      document.getElementById("resetFormBtn").textContent = t.btnResetForm;
+      document.getElementById("txtRecordedEncounters").textContent = t.txtRecordedEncounters;
+      document.getElementById("exportCsvBtn").textContent = t.exportCsvBtn;
+      document.getElementById("clearAllBtn").textContent = t.clearAllBtn;
+
+      // Re-render table (labels & count text)
       renderTable();
 
-      // Language button styles
-      document.getElementById("btnLangEn").classList.toggle(
-        "btn-lang-active",
-        lang === "en"
-      );
-      document.getElementById("btnLangDe").classList.toggle(
-        "btn-lang-active",
-        lang === "de"
-      );
-      document.getElementById("btnLangEs").classList.toggle(
-        "btn-lang-active",
-        lang === "es"
-      );
+      // Lang button state
+      document.getElementById("btnLangEn").classList.toggle("btn-lang-active", lang === "en");
+      document.getElementById("btnLangDe").classList.toggle("btn-lang-active", lang === "de");
+      document.getElementById("btnLangEs").classList.toggle("btn-lang-active", lang === "es");
     }
 
     document.getElementById("btnLangEn").addEventListener("click", () => applyLanguage("en"));
@@ -1053,6 +1145,7 @@
     const measurePatientHrBtn = document.getElementById("measurePatientHrBtn");
     const measureHcpHrBtn = document.getElementById("measureHcpHrBtn");
     const hrStatus = document.getElementById("hrStatus");
+    const runLivenessBtn = document.getElementById("runLivenessBtn");
 
     let hrStream = null;
     let hrAnimationId = null;
@@ -1078,6 +1171,62 @@
         console.error(err);
         hrStatus.textContent = t.cameraError;
       }
+    }
+
+    function computeHrFromSignal(signal, timestamps) {
+      if (!signal || signal.length < 50) return null;
+
+      const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
+      const detrended = signal.map(v => v - mean);
+
+      const smoothed = [];
+      const window = 5;
+      for (let i = 0; i < detrended.length; i++) {
+        let s = 0;
+        let c = 0;
+        for (let j = -window; j <= window; j++) {
+          const idx = i + j;
+          if (idx >= 0 && idx < detrended.length) {
+            s += detrended[idx];
+            c++;
+          }
+        }
+        smoothed.push(s / c);
+      }
+
+      const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
+      if (maxAmp === 0) return null;
+      const threshold = maxAmp * 0.6;
+
+      const peakTimes = [];
+      for (let i = 1; i < smoothed.length - 1; i++) {
+        const prev = smoothed[i - 1];
+        const curr = smoothed[i];
+        const next = smoothed[i + 1];
+        if (curr > prev && curr > next && curr > threshold) {
+          peakTimes.push(timestamps[i]);
+        }
+      }
+
+      if (peakTimes.length < 3) return null;
+
+      const intervals = [];
+      for (let i = 1; i < peakTimes.length; i++) {
+        intervals.push(peakTimes[i] - peakTimes[i - 1]);
+      }
+
+      intervals.sort((a, b) => a - b);
+      const mid = Math.floor(intervals.length / 2);
+      const medianIntervalMs =
+        intervals.length % 2 === 0
+          ? (intervals[mid - 1] + intervals[mid]) / 2
+          : intervals[mid];
+
+      if (!medianIntervalMs || medianIntervalMs <= 0) return null;
+
+      const bpm = 60000 / medianIntervalMs;
+      if (bpm < 40 || bpm > 180) return null;
+      return bpm;
     }
 
     function startHrMeasurement(targetInput) {
@@ -1151,65 +1300,202 @@
       hrAnimationId = requestAnimationFrame(collectFrame);
     }
 
-    function computeHrFromSignal(signal, timestamps) {
-      if (!signal || signal.length < 50) return null;
-
-      const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-      const detrended = signal.map(v => v - mean);
-
-      const smoothed = [];
-      const window = 5;
-      for (let i = 0; i < detrended.length; i++) {
-        let s = 0;
-        let c = 0;
-        for (let j = -window; j <= window; j++) {
-          const idx = i + j;
-          if (idx >= 0 && idx < detrended.length) {
-            s += detrended[idx];
-            c++;
-          }
-        }
-        smoothed.push(s / c);
-      }
-
-      const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
-      if (maxAmp === 0) return null;
-      const threshold = maxAmp * 0.6;
-
-      const peakTimes = [];
-      for (let i = 1; i < smoothed.length - 1; i++) {
-        const prev = smoothed[i - 1];
-        const curr = smoothed[i];
-        const next = smoothed[i + 1];
-        if (curr > prev && curr > next && curr > threshold) {
-          peakTimes.push(timestamps[i]);
-        }
-      }
-
-      if (peakTimes.length < 3) return null;
-
-      const intervals = [];
-      for (let i = 1; i < peakTimes.length; i++) {
-        intervals.push(peakTimes[i] - peakTimes[i - 1]);
-      }
-
-      intervals.sort((a, b) => a - b);
-      const mid = Math.floor(intervals.length / 2);
-      const medianIntervalMs =
-        intervals.length % 2 === 0
-          ? (intervals[mid - 1] + intervals[mid]) / 2
-          : intervals[mid];
-
-      if (!medianIntervalMs || medianIntervalMs <= 0) return null;
-
-      const bpm = 60000 / medianIntervalMs;
-      if (bpm < 40 || bpm > 180) return null;
-      return bpm;
-    }
-
     startCameraBtn.addEventListener("click", startHrCamera);
     measurePatientHrBtn.addEventListener("click", () => startHrMeasurement(patientHrInput));
     measureHcpHrBtn.addEventListener("click", () => startHrMeasurement(hcpHrInput));
+
+    // ========= LIVENESS / ANTI-DEEPFAKE =========
+    const livenessScoreValue = document.getElementById("livenessScoreValue");
+    const livenessHrValue = document.getElementById("livenessHrValue");
+    const signalQualityValue = document.getElementById("signalQualityValue");
+    const roiCorrelationValue = document.getElementById("roiCorrelationValue");
+    const livenessConclusion = document.getElementById("livenessConclusion");
+
+    function correlation(a, b) {
+      const n = Math.min(a.length, b.length);
+      if (n < 10) return 0;
+      let sumA = 0, sumB = 0;
+      for (let i = 0; i < n; i++) {
+        sumA += a[i];
+        sumB += b[i];
+      }
+      const meanA = sumA / n;
+      const meanB = sumB / n;
+      let num = 0, denA = 0, denB = 0;
+      for (let i = 0; i < n; i++) {
+        const da = a[i] - meanA;
+        const db = b[i] - meanB;
+        num += da * db;
+        denA += da * da;
+        denB += db * db;
+      }
+      const denom = Math.sqrt(denA * denB);
+      if (!denom) return 0;
+      return num / denom;
+    }
+
+    function computeSignalQuality(signal) {
+      if (!signal || signal.length < 30) return 0;
+      const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
+      const detrended = signal.map(v => v - mean);
+      let min = Infinity, max = -Infinity;
+      let sumSq = 0;
+      for (const v of detrended) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        sumSq += v * v;
+      }
+      const amp = max - min;
+      const std = Math.sqrt(sumSq / detrended.length) || 1e-6;
+      return amp / std; // rough SNR-like metric
+    }
+
+    function runLivenessCheck() {
+      const t = i18n[currentLang];
+      if (!hrVideo || !hrVideo.srcObject) {
+        hrStatus.textContent = t.livenessCameraNeeded;
+        return;
+      }
+      if (hrCollecting) {
+        hrStatus.textContent = t.cameraBusy;
+        return;
+      }
+
+      hrCollecting = true;
+      hrStatus.textContent = t.livenessRunningStatus;
+
+      const ctx = hrCanvas.getContext("2d");
+      const durationMs = 30000;
+      const startTime = performance.now();
+
+      const foreheadSignal = [];
+      const cheekLSignal = [];
+      const cheekRSignal = [];
+      const timestamps = [];
+
+      function collectFrame(now) {
+        if (!hrCollecting) return;
+
+        const elapsed = now - startTime;
+        if (elapsed >= durationMs) {
+          hrCollecting = false;
+          cancelAnimationFrame(hrAnimationId);
+          processLivenessSignals(foreheadSignal, cheekLSignal, cheekRSignal, timestamps);
+          return;
+        }
+
+        const width = hrCanvas.width;
+        const height = hrCanvas.height;
+        ctx.drawImage(hrVideo, 0, 0, width, height);
+
+        // Define three ROIs: forehead, left cheek, right cheek
+        const fw = Math.floor(width * 0.4);
+        const fh = Math.floor(height * 0.22);
+        const fx = Math.floor((width - fw) / 2);
+        const fy = Math.floor(height * 0.12); // forehead area
+
+        const cw = Math.floor(width * 0.3);
+        const ch = Math.floor(height * 0.28);
+        const ly = Math.floor(height * 0.35);
+        const lx = Math.floor(width * 0.15);
+        const rx = Math.floor(width - cw - width * 0.15);
+
+        function avgGreen(x, y, w, h) {
+          const frame = ctx.getImageData(x, y, w, h);
+          const data = frame.data;
+          let sumG = 0;
+          let count = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            sumG += data[i + 1];
+            count++;
+          }
+          return count ? sumG / count : 0;
+        }
+
+        foreheadSignal.push(avgGreen(fx, fy, fw, fh));
+        cheekLSignal.push(avgGreen(lx, ly, cw, ch));
+        cheekRSignal.push(avgGreen(rx, ly, cw, ch));
+        timestamps.push(now);
+
+        hrAnimationId = requestAnimationFrame(collectFrame);
+      }
+
+      hrAnimationId = requestAnimationFrame(collectFrame);
+    }
+
+    function processLivenessSignals(forehead, cheekL, cheekR, timestamps) {
+      const t = i18n[currentLang];
+
+      const bpm = computeHrFromSignal(forehead, timestamps);
+      const quality = computeSignalQuality(forehead);
+      const corrFL = correlation(forehead, cheekL);
+      const corrFR = correlation(forehead, cheekR);
+      const corrLR = correlation(cheekL, cheekR);
+      const avgCorr = (corrFL + corrFR + corrLR) / 3;
+
+      let qualityText;
+      if (quality > 6) qualityText = `high (${quality.toFixed(2)})`;
+      else if (quality > 3) qualityText = `medium (${quality.toFixed(2)})`;
+      else qualityText = `low (${quality.toFixed(2)})`;
+
+      const corrText = `FL=${corrFL.toFixed(2)}, FR=${corrFR.toFixed(2)}, LR=${corrLR.toFixed(2)} (avg=${avgCorr.toFixed(2)})`;
+
+      let score = 0;
+
+      // HR contribution
+      if (bpm) {
+        if (bpm >= 50 && bpm <= 130) score += 40;
+        else if (bpm >= 40 && bpm <= 160) score += 20;
+      }
+
+      // Quality
+      if (quality > 6) score += 30;
+      else if (quality > 3) score += 20;
+      else if (quality > 1.5) score += 10;
+
+      // Correlation
+      if (avgCorr > 0.7) score += 20;
+      else if (avgCorr > 0.4) score += 10;
+
+      // Minimal peaks factor (reuse HR existence)
+      if (bpm) score += 10;
+
+      if (score > 100) score = 100;
+
+      livenessScoreValue.textContent = isNaN(score) ? "–" : score.toFixed(0);
+      livenessScoreValue.classList.remove("liveness-pass", "liveness-borderline", "liveness-suspicious");
+
+      if (bpm) {
+        const unit = currentLang === "es" ? "lpm" : "bpm";
+        livenessHrValue.textContent = `${bpm.toFixed(0)} ${unit}`;
+      } else {
+        livenessHrValue.textContent = "–";
+      }
+
+      signalQualityValue.textContent = qualityText;
+      roiCorrelationValue.textContent = corrText;
+
+      let conclusionText;
+      if (!bpm || quality <= 1 || avgCorr <= 0.2) {
+        score = Math.min(score, 40);
+      }
+
+      if (score >= 75) {
+        conclusionText = t.livenessConclusionPass;
+        livenessScoreValue.classList.add("liveness-pass");
+      } else if (score >= 50) {
+        conclusionText = t.livenessConclusionBorderline;
+        livenessScoreValue.classList.add("liveness-borderline");
+      } else {
+        conclusionText = t.livenessConclusionFail;
+        livenessScoreValue.classList.add("liveness-suspicious");
+      }
+
+      livenessConclusion.textContent = conclusionText;
+      hrStatus.textContent = i18n[currentLang].hrStatusIdle;
+    }
+
+    runLivenessBtn.addEventListener("click", runLivenessCheck);
 
     window.addEventListener("beforeunload", () => {
       if (hrStream) {
