@@ -88,6 +88,10 @@
       background: #dc2626;
       color: #ffffff;
     }
+    .btn-lang-active {
+      border: 1px solid #2563eb;
+      font-weight: 600;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -115,12 +119,36 @@
       font-size: 0.9rem;
       color: #6b7280;
     }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .lang-switch {
+      display: flex;
+      gap: 0.25rem;
+    }
+    footer {
+      margin-top: 1.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    footer strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
     @media (max-width: 600px) {
       body {
         padding: 0.75rem;
       }
       .app {
         padding: 1rem;
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
       }
       table {
         font-size: 0.75rem;
@@ -133,37 +161,47 @@
 </head>
 <body>
   <div class="app">
-    <h1>Encounter Log</h1>
-    <p class="meta">
-      Offline HTML app to record patient livelihood, healthcare professional licence details and experimental
-      camera-based heart rate (HR) for both.
-      <br>
-      <strong>Note:</strong> HR estimation via webcam is experimental, non-medical and must not be used for
-      clinical decision-making.
-    </p>
+    <div class="top-bar">
+      <div>
+        <h1 id="txtAppTitle">Encounter Log</h1>
+        <p id="txtAppSubtitle" class="meta">
+          Offline HTML app to record patient livelihood, healthcare professional licence details
+          and experimental camera-based heart rate (HR) for both.
+          <br>
+          <strong>Note:</strong> HR estimation via webcam is experimental, non-medical and must not be used for
+          clinical decision-making.
+        </p>
+      </div>
+      <div class="lang-switch">
+        <button type="button" id="btnLangEn" class="btn-secondary btn-lang-active">EN</button>
+        <button type="button" id="btnLangDe" class="btn-secondary">DE</button>
+        <button type="button" id="btnLangEs" class="btn-secondary">ES</button>
+      </div>
+    </div>
 
     <form id="encounterForm">
       <!-- ENCOUNTER -->
       <fieldset>
-        <legend>Encounter</legend>
+        <legend id="txtEncounterLegend">Encounter</legend>
         <div class="grid">
           <div>
-            <label for="encounterDate">Date &amp; Time *</label>
+            <label for="encounterDate" id="lblEncounterDate">Date &amp; Time *</label>
             <input type="datetime-local" id="encounterDate" name="encounterDate" required />
           </div>
           <div>
-            <label for="encounterLocation">Location / Unit</label>
-            <input type="text" id="encounterLocation" name="encounterLocation" placeholder="Ward, clinic, telehealth, etc." />
+            <label for="encounterLocation" id="lblEncounterLocation">Location / Unit</label>
+            <input type="text" id="encounterLocation" name="encounterLocation"
+                   placeholder="Ward, clinic, telehealth, etc." />
           </div>
           <div>
-            <label for="encounterType">Encounter Type</label>
+            <label for="encounterType" id="lblEncounterType">Encounter Type</label>
             <select id="encounterType" name="encounterType">
-              <option value="">Select…</option>
-              <option>Initial assessment</option>
-              <option>Follow-up</option>
-              <option>Telehealth</option>
-              <option>Discharge</option>
-              <option>Other</option>
+              <option value="" id="optEncTypeEmpty">Select…</option>
+              <option id="optEncTypeInitial">Initial assessment</option>
+              <option id="optEncTypeFollowup">Follow-up</option>
+              <option id="optEncTypeTele">Telehealth</option>
+              <option id="optEncTypeDischarge">Discharge</option>
+              <option id="optEncTypeOther">Other</option>
             </select>
           </div>
         </div>
@@ -171,34 +209,34 @@
 
       <!-- PATIENT -->
       <fieldset>
-        <legend>Patient</legend>
+        <legend id="txtPatientLegend">Patient</legend>
         <div class="grid">
           <div>
-            <label for="patientId">Patient ID / Code *</label>
+            <label for="patientId" id="lblPatientId">Patient ID / Code *</label>
             <input type="text" id="patientId" name="patientId" required />
           </div>
           <div>
-            <label for="patientName">Name (optional)</label>
+            <label for="patientName" id="lblPatientName">Name (optional)</label>
             <input type="text" id="patientName" name="patientName" />
           </div>
           <div>
-            <label for="patientAge">Age</label>
+            <label for="patientAge" id="lblPatientAge">Age</label>
             <input type="number" id="patientAge" name="patientAge" min="0" max="120" />
           </div>
           <div>
-            <label for="patientSex">Sex</label>
+            <label for="patientSex" id="lblPatientSex">Sex</label>
             <select id="patientSex" name="patientSex">
-              <option value="">–</option>
-              <option>Female</option>
-              <option>Male</option>
-              <option>Diverse</option>
-              <option>Not documented</option>
+              <option value="" id="optSexEmpty">–</option>
+              <option id="optSexFemale">Female</option>
+              <option id="optSexMale">Male</option>
+              <option id="optSexDiverse">Diverse</option>
+              <option id="optSexNotDoc">Not documented</option>
             </select>
           </div>
         </div>
         <div class="grid">
           <div>
-            <label for="patientLivelihood">Livelihood / Occupation *</label>
+            <label for="patientLivelihood" id="lblPatientLivelihood">Livelihood / Occupation *</label>
             <input
               type="text"
               id="patientLivelihood"
@@ -208,18 +246,18 @@
             />
           </div>
           <div>
-            <label for="incomeBracket">Income / Socioeconomic Status</label>
+            <label for="incomeBracket" id="lblIncomeBracket">Income / Socioeconomic Status</label>
             <select id="incomeBracket" name="incomeBracket">
-              <option value="">Not recorded</option>
-              <option>Low</option>
-              <option>Lower-middle</option>
-              <option>Middle</option>
-              <option>Upper-middle</option>
-              <option>High</option>
+              <option value="" id="optIncomeEmpty">Not recorded</option>
+              <option id="optIncomeLow">Low</option>
+              <option id="optIncomeLowerMid">Lower-middle</option>
+              <option id="optIncomeMid">Middle</option>
+              <option id="optIncomeUpperMid">Upper-middle</option>
+              <option id="optIncomeHigh">High</option>
             </select>
           </div>
           <div>
-            <label for="patientHr">Patient HR (bpm, camera)</label>
+            <label for="patientHr" id="lblPatientHr">Patient HR (bpm, camera)</label>
             <input type="number" id="patientHr" name="patientHr" readonly />
           </div>
         </div>
@@ -227,36 +265,36 @@
 
       <!-- HCP -->
       <fieldset>
-        <legend>Healthcare Professional</legend>
+        <legend id="txtHcpLegend">Healthcare Professional</legend>
         <div class="grid">
           <div>
-            <label for="hcpName">HCP Name *</label>
+            <label for="hcpName" id="lblHcpName">HCP Name *</label>
             <input type="text" id="hcpName" name="hcpName" required />
           </div>
           <div>
-            <label for="hcpRole">Profession / Role *</label>
+            <label for="hcpRole" id="lblHcpRole">Profession / Role *</label>
             <input type="text" id="hcpRole" name="hcpRole" required placeholder="Physiotherapist, MD, Nurse, etc." />
           </div>
           <div>
-            <label for="licenseNumber">Licence Number *</label>
+            <label for="licenseNumber" id="lblLicenseNumber">Licence Number *</label>
             <input type="text" id="licenseNumber" name="licenseNumber" required />
           </div>
         </div>
         <div class="grid">
           <div>
-            <label for="licenseAuthority">Issuing Authority</label>
+            <label for="licenseAuthority" id="lblLicenseAuthority">Issuing Authority</label>
             <input type="text" id="licenseAuthority" name="licenseAuthority" placeholder="e.g. State Medical Board" />
           </div>
           <div>
-            <label for="licenseCountry">Licence Country</label>
+            <label for="licenseCountry" id="lblLicenseCountry">Licence Country</label>
             <input type="text" id="licenseCountry" name="licenseCountry" placeholder="e.g. DE, AE, LY" />
           </div>
           <div>
-            <label for="licenseExpiry">Licence Expiry</label>
+            <label for="licenseExpiry" id="lblLicenseExpiry">Licence Expiry</label>
             <input type="date" id="licenseExpiry" name="licenseExpiry" />
           </div>
           <div>
-            <label for="hcpHr">HCP HR (bpm, camera)</label>
+            <label for="hcpHr" id="lblHcpHr">HCP HR (bpm, camera)</label>
             <input type="number" id="hcpHr" name="hcpHr" readonly />
           </div>
         </div>
@@ -264,14 +302,14 @@
 
       <!-- CLINICAL -->
       <fieldset>
-        <legend>Clinical Summary</legend>
+        <legend id="txtClinicalLegend">Clinical Summary</legend>
         <div class="grid">
           <div>
-            <label for="reason">Reason for Encounter</label>
+            <label for="reason" id="lblReason">Reason for Encounter</label>
             <textarea id="reason" name="reason" placeholder="Chief complaint / reason"></textarea>
           </div>
           <div>
-            <label for="notes">Notes</label>
+            <label for="notes" id="lblNotes">Notes</label>
             <textarea id="notes" name="notes" placeholder="Key findings, plan, risks, etc."></textarea>
           </div>
         </div>
@@ -279,8 +317,8 @@
 
       <!-- CAMERA HR -->
       <fieldset>
-        <legend>Camera Heart Rate (Experimental)</legend>
-        <p class="meta">
+        <legend id="txtCameraLegend">Camera Heart Rate (Experimental)</legend>
+        <p id="txtCameraInfo" class="meta">
           Webcam-based remote PPG (rPPG) to estimate HR. Experimental only (non-medical). Use only with informed consent.
         </p>
         <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-start;">
@@ -301,9 +339,9 @@
               Status: Camera not started.
             </p>
             <ul class="meta">
-              <li>Face centered in video, well lit.</li>
-              <li>Stay still during measurement (~20s).</li>
-              <li>Result is an estimate only.</li>
+              <li id="txtCamHint1">Face centered in video, well lit.</li>
+              <li id="txtCamHint2">Stay still during measurement (~20s).</li>
+              <li id="txtCamHint3">Result is an estimate only.</li>
             </ul>
           </div>
         </div>
@@ -311,7 +349,7 @@
 
       <!-- FORM ACTIONS -->
       <div class="actions">
-        <button type="submit" class="btn-primary">Save Encounter</button>
+        <button type="submit" class="btn-primary" id="btnSaveEncounter">Save Encounter</button>
         <button type="button" class="btn-secondary" id="resetFormBtn">Reset Form</button>
       </div>
     </form>
@@ -319,15 +357,438 @@
     <hr style="margin: 1.5rem 0;" />
 
     <!-- STORED ENCOUNTERS -->
-    <h2>Recorded Encounters</h2>
+    <h2 id="txtRecordedEncounters">Recorded Encounters</h2>
     <div class="actions">
       <button type="button" class="btn-secondary" id="exportCsvBtn">Export CSV</button>
       <button type="button" class="btn-danger" id="clearAllBtn">Delete All</button>
     </div>
     <div id="encounterTableContainer"></div>
+
+    <!-- FOOTER: DEVELOPER & DISCLAIMER -->
+    <footer class="meta">
+      <strong id="txtFooterTitle">Developer & Disclaimer</strong>
+      <p id="txtFooterDev"></p>
+      <p id="txtFooterContact"></p>
+      <p id="txtFooterDisclaimer"></p>
+    </footer>
   </div>
 
   <script>
+    // ========== SIMPLE EN/DE/ES I18N ==========
+    let currentLang = "en";
+
+    const i18n = {
+      en: {
+        appTitle: "Encounter Log",
+        appSubtitle:
+          "Offline HTML app to record patient livelihood, healthcare professional licence details and experimental camera-based heart rate (HR) for both.\n" +
+          "Note: HR estimation via webcam is experimental, non-medical and must not be used for clinical decision-making.",
+        encounterLegend: "Encounter",
+        encounterDate: "Date & Time *",
+        encounterLocation: "Location / Unit",
+        encounterLocationPh: "Ward, clinic, telehealth, etc.",
+        encounterType: "Encounter Type",
+        encTypeEmpty: "Select…",
+        encTypeInitial: "Initial assessment",
+        encTypeFollowup: "Follow-up",
+        encTypeTele: "Telehealth",
+        encTypeDischarge: "Discharge",
+        encTypeOther: "Other",
+
+        patientLegend: "Patient",
+        patientId: "Patient ID / Code *",
+        patientName: "Name (optional)",
+        patientAge: "Age",
+        patientSex: "Sex",
+        sexEmpty: "–",
+        sexFemale: "Female",
+        sexMale: "Male",
+        sexDiverse: "Diverse",
+        sexNotDoc: "Not documented",
+
+        patientLivelihood: "Livelihood / Occupation *",
+        patientLivelihoodPh: "e.g. Teacher, Construction worker, Retired",
+        incomeBracket: "Income / Socioeconomic Status",
+        incomeEmpty: "Not recorded",
+        incomeLow: "Low",
+        incomeLowerMid: "Lower-middle",
+        incomeMid: "Middle",
+        incomeUpperMid: "Upper-middle",
+        incomeHigh: "High",
+        patientHr: "Patient HR (bpm, camera)",
+
+        hcpLegend: "Healthcare Professional",
+        hcpName: "HCP Name *",
+        hcpRole: "Profession / Role *",
+        hcpRolePh: "Physiotherapist, MD, Nurse, etc.",
+        licenseNumber: "Licence Number *",
+        licenseAuthority: "Issuing Authority",
+        licenseAuthorityPh: "e.g. State Medical Board",
+        licenseCountry: "Licence Country",
+        licenseCountryPh: "e.g. DE, AE, LY",
+        licenseExpiry: "Licence Expiry",
+        hcpHr: "HCP HR (bpm, camera)",
+
+        clinicalLegend: "Clinical Summary",
+        reason: "Reason for Encounter",
+        reasonPh: "Chief complaint / reason",
+        notes: "Notes",
+        notesPh: "Key findings, plan, risks, etc.",
+
+        cameraLegend: "Camera Heart Rate (Experimental)",
+        cameraInfo:
+          "Webcam-based remote PPG (rPPG) to estimate HR. Experimental only (non-medical). Use only with informed consent.",
+        camHint1: "Face centered in video, well lit.",
+        camHint2: "Stay still during measurement (~20s).",
+        camHint3: "Result is an estimate only.",
+        startCameraBtn: "Start Camera",
+        measurePatientHrBtn: "Measure Patient HR (~20s)",
+        measureHcpHrBtn: "Measure HCP HR (~20s)",
+        hrStatusIdle: "Status: Camera not started.",
+        cameraStarted: "Status: Camera started. Position face in center, good lighting.",
+
+        btnSaveEncounter: "Save Encounter",
+        btnResetForm: "Reset Form",
+        txtRecordedEncounters: "Recorded Encounters",
+        exportCsvBtn: "Export CSV",
+        clearAllBtn: "Delete All",
+        noData: "No encounters recorded yet.",
+        savedAlert: "Encounter saved locally on this device.",
+        deleteConfirm: "Delete all stored encounters on this device?",
+        noExportData: "No data to export.",
+        cameraAlready: "Status: Camera already running.",
+        cameraError: "Status: Unable to access camera. Check permissions.",
+        cameraStartFirst: "Status: Start the camera first.",
+        cameraMeasuring: "Status: Measuring... stay still for ~20 seconds.",
+        cameraBusy: "Status: Already measuring. Please wait.",
+        cameraOk: (bpm) => `Status: Estimated HR ≈ ${bpm.toFixed(0)} bpm (non-clinical).`,
+        cameraFail: "Status: Unable to estimate HR. Try again with better lighting & less movement.",
+        tableCount: (n) => `${n} encounter(s) stored locally in this browser.`,
+
+        footerTitle: "Developer & Disclaimer",
+        footerDev:
+          "Individual development project / prototype by Mr. Moustafa Mohammed Elsayed Elsayed Ali.",
+        footerContact:
+          "Contact: Kronwittener Straße 1, 84367 Tann, Germany · Email: mostischmidbauer@web.de · agentic@virtualcaresolution.de · Phone: +49 1522 5231568",
+        footerDisclaimer:
+          "This tool is not a certified medical device or official documentation system. Use is at your own responsibility. Data are stored only locally in this browser (localStorage) unless exported as CSV. Always rely on your institution’s official systems and on clinical judgement for diagnosis and treatment decisions."
+      },
+      de: {
+        appTitle: "Begegnungsprotokoll",
+        appSubtitle:
+          "Offline-HTML-Anwendung zur Dokumentation der Lebenssituation von Patient:innen, der Berufszulassung von Behandler:innen sowie eines experimentellen kamerabasierten Herzfrequenz-Messwertes.\n" +
+          "Hinweis: Die HR-Schätzung über die Webcam ist experimentell, nicht-medizinisch und darf nicht für klinische Entscheidungen verwendet werden.",
+        encounterLegend: "Begegnung / Kontakt",
+        encounterDate: "Datum & Uhrzeit *",
+        encounterLocation: "Ort / Station",
+        encounterLocationPh: "Station, Ambulanz, Tele-Reha usw.",
+        encounterType: "Art der Begegnung",
+        encTypeEmpty: "Auswählen…",
+        encTypeInitial: "Erstbefund / Aufnahme",
+        encTypeFollowup: "Verlauf / Folgebehandlung",
+        encTypeTele: "Telemedizin / Video",
+        encTypeDischarge: "Entlassung",
+        encTypeOther: "Sonstiges",
+
+        patientLegend: "Patient:in",
+        patientId: "Patienten-ID / Code *",
+        patientName: "Name (optional)",
+        patientAge: "Alter",
+        patientSex: "Geschlecht",
+        sexEmpty: "–",
+        sexFemale: "Weiblich",
+        sexMale: "Männlich",
+        sexDiverse: "Divers",
+        sexNotDoc: "Nicht dokumentiert",
+
+        patientLivelihood: "Lebensunterhalt / Beruf *",
+        patientLivelihoodPh: "z. B. Lehrer:in, Bauarbeiter:in, Rentner:in",
+        incomeBracket: "Einkommens- / Sozialstatus",
+        incomeEmpty: "Nicht erfasst",
+        incomeLow: "Niedrig",
+        incomeLowerMid: "Unteres Mittelfeld",
+        incomeMid: "Mittelfeld",
+        incomeUpperMid: "Oberes Mittelfeld",
+        incomeHigh: "Hoch",
+        patientHr: "HF Patient:in (bpm, Kamera)",
+
+        hcpLegend: "Behandler:in",
+        hcpName: "Name Behandler:in *",
+        hcpRole: "Beruf / Rolle *",
+        hcpRolePh: "Physiotherapeut:in, Ärzt:in, Pflegekraft usw.",
+        licenseNumber: "Berufszulassungsnummer *",
+        licenseAuthority: "Ausstellende Behörde",
+        licenseAuthorityPh: "z. B. Landesärztekammer",
+        licenseCountry: "Zulassungsland",
+        licenseCountryPh: "z. B. DE, AE, LY",
+        licenseExpiry: "Ablauf der Zulassung",
+        hcpHr: "HF Behandler:in (bpm, Kamera)",
+
+        clinicalLegend: "Klinische Zusammenfassung",
+        reason: "Anlass der Behandlung",
+        reasonPh: "Leitsymptom / Anlass",
+        notes: "Notizen",
+        notesPh: "Wesentliche Befunde, Planung, Risiken usw.",
+
+        cameraLegend: "Kamerabasierte Herzfrequenz (experimentell)",
+        cameraInfo:
+          "Webcam-basiertes Remote-PPG (rPPG) zur Schätzung der Herzfrequenz. Nur experimentell, nicht-medizinisch. Nur mit Einwilligung verwenden.",
+        camHint1: "Gesicht mittig im Bild, gute Beleuchtung.",
+        camHint2: "Während der Messung (~20 s) möglichst ruhig sitzen.",
+        camHint3: "Ergebnis ist nur ein Schätzwert.",
+        startCameraBtn: "Kamera starten",
+        measurePatientHrBtn: "HF Patient:in messen (~20 s)",
+        measureHcpHrBtn: "HF Behandler:in messen (~20 s)",
+        hrStatusIdle: "Status: Kamera noch nicht gestartet.",
+        cameraStarted: "Status: Kamera gestartet. Gesicht zentrieren, gute Beleuchtung.",
+
+        btnSaveEncounter: "Begegnung speichern",
+        btnResetForm: "Formular zurücksetzen",
+        txtRecordedEncounters: "Gespeicherte Begegnungen",
+        exportCsvBtn: "CSV exportieren",
+        clearAllBtn: "Alle löschen",
+        noData: "Noch keine Begegnungen gespeichert.",
+        savedAlert: "Begegnung lokal auf diesem Gerät gespeichert.",
+        deleteConfirm: "Alle gespeicherten Begegnungen auf diesem Gerät löschen?",
+        noExportData: "Keine Daten zum Export vorhanden.",
+        cameraAlready: "Status: Kamera läuft bereits.",
+        cameraError: "Status: Kein Zugriff auf die Kamera. Berechtigungen prüfen.",
+        cameraStartFirst: "Status: Bitte zuerst die Kamera starten.",
+        cameraMeasuring: "Status: Messung läuft … bitte ~20 s ruhig sitzen bleiben.",
+        cameraBusy: "Status: Es wird bereits gemessen. Bitte warten.",
+        cameraOk: (bpm) => `Status: Geschätzte HF ≈ ${bpm.toFixed(0)} bpm (nicht-medizinisch).`,
+        cameraFail: "Status: HF konnte nicht geschätzt werden. Erneut versuchen (bessere Beleuchtung, weniger Bewegung).",
+        tableCount: (n) => `${n} Begegnung(en) lokal in diesem Browser gespeichert.`,
+
+        footerTitle: "Entwickler & Haftungsausschluss",
+        footerDev:
+          "Individuelles Entwicklungsprojekt / Prototyp von Herrn Moustafa Mohammed Elsayed Elsayed Ali.",
+        footerContact:
+          "Kontakt: Kronwittener Straße 1, 84367 Tann, Deutschland · E-Mail: mostischmidbauer@web.de · agentic@virtualcaresolution.de · Telefon: +49 1522 5231568",
+        footerDisclaimer:
+          "Dieses Tool ist kein zertifiziertes Medizinprodukt und kein offizielles Dokumentationssystem. Die Nutzung erfolgt in eigener Verantwortung. Daten werden nur lokal in diesem Browser (localStorage) gespeichert, sofern sie nicht manuell als CSV exportiert werden. Für Diagnostik und Therapie sind stets die offiziellen Systeme Ihrer Einrichtung und die klinische Beurteilung maßgeblich."
+      },
+      es: {
+        appTitle: "Registro de Encuentros",
+        appSubtitle:
+          "Aplicación HTML offline para registrar el medio de vida del/la paciente, los datos de licencia del profesional sanitario y una frecuencia cardiaca (FC) experimental medida por cámara para ambos.\n" +
+          "Nota: La estimación de FC mediante webcam es experimental, no médica y no debe utilizarse para decisiones clínicas.",
+        encounterLegend: "Encuentro",
+        encounterDate: "Fecha y hora *",
+        encounterLocation: "Lugar / Unidad",
+        encounterLocationPh: "Planta, consulta, telemedicina, etc.",
+        encounterType: "Tipo de encuentro",
+        encTypeEmpty: "Seleccionar…",
+        encTypeInitial: "Valoración inicial",
+        encTypeFollowup: "Seguimiento",
+        encTypeTele: "Telemedicina",
+        encTypeDischarge: "Alta",
+        encTypeOther: "Otro",
+
+        patientLegend: "Paciente",
+        patientId: "ID / Código de paciente *",
+        patientName: "Nombre (opcional)",
+        patientAge: "Edad",
+        patientSex: "Sexo",
+        sexEmpty: "–",
+        sexFemale: "Femenino",
+        sexMale: "Masculino",
+        sexDiverse: "Diverso",
+        sexNotDoc: "No documentado",
+
+        patientLivelihood: "Medio de vida / Ocupación *",
+        patientLivelihoodPh: "p. ej. Profesor, obrero de construcción, jubilado",
+        incomeBracket: "Nivel de ingresos / Situación social",
+        incomeEmpty: "No registrado",
+        incomeLow: "Bajo",
+        incomeLowerMid: "Medio-bajo",
+        incomeMid: "Medio",
+        incomeUpperMid: "Medio-alto",
+        incomeHigh: "Alto",
+        patientHr: "FC paciente (lpm, cámara)",
+
+        hcpLegend: "Profesional sanitario",
+        hcpName: "Nombre del profesional *",
+        hcpRole: "Profesión / Rol *",
+        hcpRolePh: "Fisioterapeuta, médico, enfermería, etc.",
+        licenseNumber: "Número de licencia *",
+        licenseAuthority: "Autoridad emisora",
+        licenseAuthorityPh: "p. ej. Colegio médico",
+        licenseCountry: "País de la licencia",
+        licenseCountryPh: "p. ej. ES, DE, AE",
+        licenseExpiry: "Caducidad de la licencia",
+        hcpHr: "FC profesional (lpm, cámara)",
+
+        clinicalLegend: "Resumen clínico",
+        reason: "Motivo del encuentro",
+        reasonPh: "Síntoma principal / motivo",
+        notes: "Notas",
+        notesPh: "Hallazgos clave, plan, riesgos, etc.",
+
+        cameraLegend: "Frecuencia cardiaca por cámara (experimental)",
+        cameraInfo:
+          "PPG remota basada en webcam (rPPG) para estimar la FC. Solo experimental, no médico. Utilizar solo con consentimiento informado.",
+        camHint1: "Cara centrada en el vídeo y bien iluminada.",
+        camHint2: "Permanecer quieto durante la medición (~20 s).",
+        camHint3: "El resultado es solo una estimación.",
+        startCameraBtn: "Iniciar cámara",
+        measurePatientHrBtn: "Medir FC paciente (~20 s)",
+        measureHcpHrBtn: "Medir FC profesional (~20 s)",
+        hrStatusIdle: "Estado: Cámara no iniciada.",
+        cameraStarted: "Estado: Cámara iniciada. Coloque la cara en el centro, con buena luz.",
+
+        btnSaveEncounter: "Guardar encuentro",
+        btnResetForm: "Reiniciar formulario",
+        txtRecordedEncounters: "Encuentros registrados",
+        exportCsvBtn: "Exportar CSV",
+        clearAllBtn: "Borrar todo",
+        noData: "Todavía no hay encuentros registrados.",
+        savedAlert: "Encuentro guardado localmente en este dispositivo.",
+        deleteConfirm: "¿Borrar todos los encuentros guardados en este dispositivo?",
+        noExportData: "No hay datos para exportar.",
+        cameraAlready: "Estado: La cámara ya está en marcha.",
+        cameraError: "Estado: No se puede acceder a la cámara. Compruebe permisos.",
+        cameraStartFirst: "Estado: Inicie la cámara primero.",
+        cameraMeasuring: "Estado: Midiendo… permanezca quieto durante ~20 s.",
+        cameraBusy: "Estado: Ya hay una medición en curso. Espere.",
+        cameraOk: (bpm) => `Estado: FC estimada ≈ ${bpm.toFixed(0)} lpm (no médico).`,
+        cameraFail: "Estado: No se pudo estimar la FC. Inténtelo de nuevo con mejor luz y menos movimiento.",
+        tableCount: (n) => `${n} encuentro(s) almacenado(s) localmente en este navegador.`,
+
+        footerTitle: "Desarrollador y descargo de responsabilidad",
+        footerDev:
+          "Proyecto de desarrollo individual / prototipo realizado por el Sr. Moustafa Mohammed Elsayed Elsayed Ali.",
+        footerContact:
+          "Contacto: Kronwittener Straße 1, 84367 Tann, Alemania · Email: mostischmidbauer@web.de · agentic@virtualcaresolution.de · Teléfono: +49 1522 5231568",
+        footerDisclaimer:
+          "Esta herramienta no es un dispositivo médico certificado ni un sistema oficial de documentación. Su uso es responsabilidad del usuario. Los datos se almacenan únicamente de forma local en este navegador (localStorage), salvo que se exporten manualmente en CSV. Para diagnóstico y tratamiento, utilice siempre los sistemas oficiales de su institución y su criterio clínico."
+      }
+    };
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const t = i18n[lang];
+
+      document.documentElement.lang = lang;
+
+      // Headline & subtitle
+      document.getElementById("txtAppTitle").textContent = t.appTitle;
+      const subtitleEl = document.getElementById("txtAppSubtitle");
+      subtitleEl.innerHTML = "";
+      t.appSubtitle.split("\n").forEach((line, idx) => {
+        if (idx > 0) subtitleEl.appendChild(document.createElement("br"));
+        subtitleEl.appendChild(document.createTextNode(line));
+      });
+
+      // Encounter
+      document.getElementById("txtEncounterLegend").textContent = t.encounterLegend;
+      document.getElementById("lblEncounterDate").textContent = t.encounterDate;
+      document.getElementById("lblEncounterLocation").textContent = t.encounterLocation;
+      document.getElementById("encounterLocation").placeholder = t.encounterLocationPh;
+      document.getElementById("lblEncounterType").textContent = t.encounterType;
+      document.getElementById("optEncTypeEmpty").textContent = t.encTypeEmpty;
+      document.getElementById("optEncTypeInitial").textContent = t.encTypeInitial;
+      document.getElementById("optEncTypeFollowup").textContent = t.encTypeFollowup;
+      document.getElementById("optEncTypeTele").textContent = t.encTypeTele;
+      document.getElementById("optEncTypeDischarge").textContent = t.encTypeDischarge;
+      document.getElementById("optEncTypeOther").textContent = t.encTypeOther;
+
+      // Patient
+      document.getElementById("txtPatientLegend").textContent = t.patientLegend;
+      document.getElementById("lblPatientId").textContent = t.patientId;
+      document.getElementById("lblPatientName").textContent = t.patientName;
+      document.getElementById("lblPatientAge").textContent = t.patientAge;
+      document.getElementById("lblPatientSex").textContent = t.patientSex;
+      document.getElementById("optSexEmpty").textContent = t.sexEmpty;
+      document.getElementById("optSexFemale").textContent = t.sexFemale;
+      document.getElementById("optSexMale").textContent = t.sexMale;
+      document.getElementById("optSexDiverse").textContent = t.sexDiverse;
+      document.getElementById("optSexNotDoc").textContent = t.sexNotDoc;
+
+      document.getElementById("lblPatientLivelihood").textContent = t.patientLivelihood;
+      document.getElementById("patientLivelihood").placeholder = t.patientLivelihoodPh;
+      document.getElementById("lblIncomeBracket").textContent = t.incomeBracket;
+      document.getElementById("optIncomeEmpty").textContent = t.incomeEmpty;
+      document.getElementById("optIncomeLow").textContent = t.incomeLow;
+      document.getElementById("optIncomeLowerMid").textContent = t.incomeLowerMid;
+      document.getElementById("optIncomeMid").textContent = t.incomeMid;
+      document.getElementById("optIncomeUpperMid").textContent = t.incomeUpperMid;
+      document.getElementById("optIncomeHigh").textContent = t.incomeHigh;
+      document.getElementById("lblPatientHr").textContent = t.patientHr;
+
+      // HCP
+      document.getElementById("txtHcpLegend").textContent = t.hcpLegend;
+      document.getElementById("lblHcpName").textContent = t.hcpName;
+      document.getElementById("lblHcpRole").textContent = t.hcpRole;
+      document.getElementById("hcpRole").placeholder = t.hcpRolePh;
+      document.getElementById("lblLicenseNumber").textContent = t.licenseNumber;
+      document.getElementById("lblLicenseAuthority").textContent = t.licenseAuthority;
+      document.getElementById("licenseAuthority").placeholder = t.licenseAuthorityPh;
+      document.getElementById("lblLicenseCountry").textContent = t.licenseCountry;
+      document.getElementById("licenseCountry").placeholder = t.licenseCountryPh;
+      document.getElementById("lblLicenseExpiry").textContent = t.licenseExpiry;
+      document.getElementById("lblHcpHr").textContent = t.hcpHr;
+
+      // Clinical
+      document.getElementById("txtClinicalLegend").textContent = t.clinicalLegend;
+      document.getElementById("lblReason").textContent = t.reason;
+      document.getElementById("reason").placeholder = t.reasonPh;
+      document.getElementById("lblNotes").textContent = t.notes;
+      document.getElementById("notes").placeholder = t.notesPh;
+
+      // Camera
+      document.getElementById("txtCameraLegend").textContent = t.cameraLegend;
+      const camInfo = document.getElementById("txtCameraInfo");
+      camInfo.innerHTML = "";
+      t.cameraInfo.split("\n").forEach((line, idx) => {
+        if (idx > 0) camInfo.appendChild(document.createElement("br"));
+        camInfo.appendChild(document.createTextNode(line));
+      });
+      document.getElementById("txtCamHint1").textContent = t.camHint1;
+      document.getElementById("txtCamHint2").textContent = t.camHint2;
+      document.getElementById("txtCamHint3").textContent = t.camHint3;
+
+      document.getElementById("startCameraBtn").textContent = t.startCameraBtn;
+      document.getElementById("measurePatientHrBtn").textContent = t.measurePatientHrBtn;
+      document.getElementById("measureHcpHrBtn").textContent = t.measureHcpHrBtn;
+      document.getElementById("hrStatus").textContent = t.hrStatusIdle;
+
+      // Table headings & footer labels
+      document.getElementById("btnSaveEncounter").textContent = t.btnSaveEncounter;
+      document.getElementById("resetFormBtn").textContent = t.btnResetForm;
+      document.getElementById("txtRecordedEncounters").textContent = t.txtRecordedEncounters;
+      document.getElementById("exportCsvBtn").textContent = t.exportCsvBtn;
+      document.getElementById("clearAllBtn").textContent = t.clearAllBtn;
+
+      // Footer
+      document.getElementById("txtFooterTitle").textContent = t.footerTitle;
+      document.getElementById("txtFooterDev").textContent = t.footerDev;
+      document.getElementById("txtFooterContact").textContent = t.footerContact;
+      document.getElementById("txtFooterDisclaimer").textContent = t.footerDisclaimer;
+
+      // Re-render table (labels + count text)
+      renderTable();
+
+      // Language button styles
+      document.getElementById("btnLangEn").classList.toggle(
+        "btn-lang-active",
+        lang === "en"
+      );
+      document.getElementById("btnLangDe").classList.toggle(
+        "btn-lang-active",
+        lang === "de"
+      );
+      document.getElementById("btnLangEs").classList.toggle(
+        "btn-lang-active",
+        lang === "es"
+      );
+    }
+
+    document.getElementById("btnLangEn").addEventListener("click", () => applyLanguage("en"));
+    document.getElementById("btnLangDe").addEventListener("click", () => applyLanguage("de"));
+    document.getElementById("btnLangEs").addEventListener("click", () => applyLanguage("es"));
+
+    // ========== STORAGE & FORM LOGIC ==========
     const STORAGE_KEY = "encounterLog_v2";
 
     const form = document.getElementById("encounterForm");
@@ -339,9 +800,7 @@
     const patientHrInput = document.getElementById("patientHr");
     const hcpHrInput = document.getElementById("hcpHr");
 
-    // --- INIT ---
     document.addEventListener("DOMContentLoaded", () => {
-      // Pre-set encounter date/time to now (local)
       const encounterDate = document.getElementById("encounterDate");
       const now = new Date();
       const tzOffset = now.getTimezoneOffset() * 60000;
@@ -349,10 +808,9 @@
       if (encounterDate && !encounterDate.value) {
         encounterDate.value = localISOTime;
       }
-      renderTable();
+      applyLanguage("en");
     });
 
-    // --- STORAGE HELPERS ---
     function loadEncounters() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -369,7 +827,6 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
 
-    // --- FORM -> OBJECT ---
     function formToObject() {
       const data = new FormData(form);
       const obj = {};
@@ -380,11 +837,12 @@
       return obj;
     }
 
-    // --- RENDER TABLE ---
     function renderTable() {
       const encounters = loadEncounters();
+      const t = i18n[currentLang];
+
       if (!encounters.length) {
-        tableContainer.innerHTML = '<div class="no-data">No encounters recorded yet.</div>';
+        tableContainer.innerHTML = `<div class="no-data">${t.noData}</div>`;
         return;
       }
 
@@ -410,27 +868,73 @@
         "notes"
       ];
 
-      const labels = {
-        encounterDate: "Date/Time",
-        encounterLocation: "Location",
-        encounterType: "Type",
-        patientId: "Patient ID",
-        patientName: "Patient Name",
-        patientAge: "Age",
-        patientSex: "Sex",
-        patientLivelihood: "Livelihood",
-        incomeBracket: "Income",
-        patientHr: "Patient HR (bpm)",
-        hcpName: "HCP Name",
-        hcpRole: "HCP Role",
-        licenseNumber: "Licence No.",
-        licenseAuthority: "Authority",
-        licenseCountry: "Licence Country",
-        licenseExpiry: "Licence Expiry",
-        hcpHr: "HCP HR (bpm)",
-        reason: "Reason",
-        notes: "Notes"
+      const labelsByLang = {
+        en: {
+          encounterDate: "Date/Time",
+          encounterLocation: "Location",
+          encounterType: "Type",
+          patientId: "Patient ID",
+          patientName: "Patient Name",
+          patientAge: "Age",
+          patientSex: "Sex",
+          patientLivelihood: "Livelihood",
+          incomeBracket: "Income",
+          patientHr: "Patient HR (bpm)",
+          hcpName: "HCP Name",
+          hcpRole: "HCP Role",
+          licenseNumber: "Licence No.",
+          licenseAuthority: "Authority",
+          licenseCountry: "Licence Country",
+          licenseExpiry: "Licence Expiry",
+          hcpHr: "HCP HR (bpm)",
+          reason: "Reason",
+          notes: "Notes"
+        },
+        de: {
+          encounterDate: "Datum/Zeit",
+          encounterLocation: "Ort",
+          encounterType: "Art",
+          patientId: "Patienten-ID",
+          patientName: "Name Patient:in",
+          patientAge: "Alter",
+          patientSex: "Geschlecht",
+          patientLivelihood: "Lebensunterhalt",
+          incomeBracket: "Einkommen",
+          patientHr: "HF Patient:in (bpm)",
+          hcpName: "Name Behandler:in",
+          hcpRole: "Rolle",
+          licenseNumber: "Zulassungs-Nr.",
+          licenseAuthority: "Behörde",
+          licenseCountry: "Land",
+          licenseExpiry: "Ablauf",
+          hcpHr: "HF Behandler:in (bpm)",
+          reason: "Anlass",
+          notes: "Notizen"
+        },
+        es: {
+          encounterDate: "Fecha/hora",
+          encounterLocation: "Lugar",
+          encounterType: "Tipo",
+          patientId: "ID paciente",
+          patientName: "Nombre paciente",
+          patientAge: "Edad",
+          patientSex: "Sexo",
+          patientLivelihood: "Medio de vida",
+          incomeBracket: "Ingresos",
+          patientHr: "FC paciente (lpm)",
+          hcpName: "Nombre profesional",
+          hcpRole: "Rol",
+          licenseNumber: "Nº licencia",
+          licenseAuthority: "Autoridad",
+          licenseCountry: "País",
+          licenseExpiry: "Caducidad",
+          hcpHr: "FC profesional (lpm)",
+          reason: "Motivo",
+          notes: "Notas"
+        }
       };
+
+      const labels = labelsByLang[currentLang];
 
       const headerRow = headers.map(h => `<th>${labels[h] || h}</th>`).join("");
 
@@ -453,11 +957,10 @@
             <tbody>${rowsHtml}</tbody>
           </table>
         </div>
-        <div class="meta">${encounters.length} encounter(s) stored locally in this browser.</div>
+        <div class="meta">${t.tableCount(encounters.length)}</div>
       `;
     }
 
-    // --- FORM EVENTS ---
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!form.checkValidity()) {
@@ -468,8 +971,8 @@
       const encounters = loadEncounters();
       encounters.push(encounter);
       saveEncounters(encounters);
+      alert(i18n[currentLang].savedAlert);
       renderTable();
-      alert("Encounter saved locally on this device.");
     });
 
     resetFormBtn.addEventListener("click", () => {
@@ -484,15 +987,16 @@
     });
 
     clearAllBtn.addEventListener("click", () => {
-      if (!confirm("Delete all stored encounters on this device?")) return;
+      if (!confirm(i18n[currentLang].deleteConfirm)) return;
       localStorage.removeItem(STORAGE_KEY);
       renderTable();
     });
 
     exportCsvBtn.addEventListener("click", () => {
       const encounters = loadEncounters();
+      const t = i18n[currentLang];
       if (!encounters.length) {
-        alert("No data to export.");
+        alert(t.noExportData);
         return;
       }
 
@@ -558,8 +1062,9 @@
     let hrTimestamps = [];
 
     async function startHrCamera() {
+      const t = i18n[currentLang];
       if (hrStream) {
-        hrStatus.textContent = "Status: Camera already running.";
+        hrStatus.textContent = t.cameraAlready;
         return;
       }
       try {
@@ -568,20 +1073,21 @@
           audio: false
         });
         hrVideo.srcObject = hrStream;
-        hrStatus.textContent = "Status: Camera started. Position face in center, good lighting.";
+        hrStatus.textContent = t.cameraStarted;
       } catch (err) {
         console.error(err);
-        hrStatus.textContent = "Status: Unable to access camera. Check permissions.";
+        hrStatus.textContent = t.cameraError;
       }
     }
 
     function startHrMeasurement(targetInput) {
+      const t = i18n[currentLang];
       if (!hrVideo || !hrVideo.srcObject) {
-        hrStatus.textContent = "Status: Start the camera first.";
+        hrStatus.textContent = t.cameraStartFirst;
         return;
       }
       if (hrCollecting) {
-        hrStatus.textContent = "Status: Already measuring. Please wait.";
+        hrStatus.textContent = t.cameraBusy;
         return;
       }
 
@@ -589,7 +1095,7 @@
       hrSignal = [];
       hrTimestamps = [];
       hrCollecting = true;
-      hrStatus.textContent = "Status: Measuring... stay still for ~20 seconds.";
+      hrStatus.textContent = t.cameraMeasuring;
 
       const ctx = hrCanvas.getContext("2d");
       const durationMs = 20000;
@@ -604,12 +1110,12 @@
           cancelAnimationFrame(hrAnimationId);
           const bpm = computeHrFromSignal(hrSignal, hrTimestamps);
           if (bpm) {
-            hrStatus.textContent = `Status: Estimated HR ≈ ${bpm.toFixed(0)} bpm (non-clinical).`;
+            hrStatus.textContent = t.cameraOk(bpm);
             if (hrTargetInput) {
               hrTargetInput.value = bpm.toFixed(0);
             }
           } else {
-            hrStatus.textContent = "Status: Unable to estimate HR. Try again with better lighting & less movement.";
+            hrStatus.textContent = t.cameraFail;
           }
           return;
         }
@@ -622,7 +1128,7 @@
         const roiWidth = Math.floor(width * 0.4);
         const roiHeight = Math.floor(height * 0.4);
         const roiX = Math.floor((width - roiWidth) / 2);
-        const roiY = Math.floor(height * 0.2); // upper area: forehead/cheeks
+        const roiY = Math.floor(height * 0.2);
 
         const frame = ctx.getImageData(roiX, roiY, roiWidth, roiHeight);
         const data = frame.data;
@@ -701,15 +1207,9 @@
       return bpm;
     }
 
-    if (startCameraBtn) {
-      startCameraBtn.addEventListener("click", startHrCamera);
-    }
-    if (measurePatientHrBtn) {
-      measurePatientHrBtn.addEventListener("click", () => startHrMeasurement(patientHrInput));
-    }
-    if (measureHcpHrBtn) {
-      measureHcpHrBtn.addEventListener("click", () => startHrMeasurement(hcpHrInput));
-    }
+    startCameraBtn.addEventListener("click", startHrCamera);
+    measurePatientHrBtn.addEventListener("click", () => startHrMeasurement(patientHrInput));
+    measureHcpHrBtn.addEventListener("click", () => startHrMeasurement(hcpHrInput));
 
     window.addEventListener("beforeunload", () => {
       if (hrStream) {
