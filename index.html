@@ -1,582 +1,642 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>HCP Anti-Deepfake Liveness & Licence Check</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.4;
-      color: #111827;
-    }
-    body {
-      margin: 0;
-      padding: 1.5rem;
-      background: #f3f4f6;
-    }
-    .app {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 1.25rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    }
-    h1 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.4rem;
-    }
-    .meta {
-      font-size: 0.85rem;
-      color: #6b7280;
-      margin-bottom: 1rem;
-    }
-    .section-title {
-      font-weight: 600;
-      margin: 1rem 0 0.5rem 0;
-      font-size: 1rem;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 0.5rem 1rem;
-    }
-    label {
-      font-size: 0.9rem;
-      font-weight: 500;
-      display: block;
-      margin-bottom: 0.15rem;
-    }
-    input, select {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0.4rem 0.5rem;
-      border-radius: 6px;
-      border: 1px solid #d1d5db;
-      font: inherit;
-      background: #f9fafb;
-    }
-    .card {
-      margin-top: 0.75rem;
-      padding: 0.75rem;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-    }
-    .video-wrapper {
-      width: 100%;
-      max-width: 360px;
-      height: 240px;
-      margin: 0 auto;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid #e5e7eb;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    video {
-      transform-origin: center center;
-    }
-    .controls-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 0.45rem 0.9rem;
-      font: inherit;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-    .btn-primary {
-      background: #2563eb;
-      color: #ffffff;
-    }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-    .btn-danger {
-      background: #dc2626;
-      color: #ffffff;
-    }
-    .small-label {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-top: 0.25rem;
-    }
-    .result-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.9rem;
-    }
-    .result-item span:first-child {
-      font-weight: 600;
-    }
-    .liveness-pass {
-      color: #16a34a;
-      font-weight: 600;
-    }
-    .liveness-borderline {
-      color: #d97706;
-      font-weight: 600;
-    }
-    .liveness-suspicious {
-      color: #dc2626;
-      font-weight: 600;
-    }
-    footer {
-      margin-top: 1rem;
-      font-size: 0.75rem;
-      color: #6b7280;
-      text-align: center;
-    }
-    @media (max-width: 640px) {
-      body {
-        padding: 0.75rem;
-      }
-      .app {
-        padding: 0.75rem;
-      }
-      .video-wrapper {
-        max-width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>HCP Anti-Deepfake Liveness & Licence Check</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+:root {
+font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+line-height: 1.4;
+color: #111827;
+}
+body {
+margin: 0;
+padding: 1.5rem;
+background: #f3f4f6;
+}
+.app {
+max-width: 900px;
+margin: 0 auto;
+background: #ffffff;
+padding: 1.25rem;
+border-radius: 12px;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+h1 {
+margin: 0 0 0.5rem 0;
+font-size: 1.4rem;
+}
+.meta {
+font-size: 0.85rem;
+color: #6b7280;
+margin-bottom: 1rem;
+}
+.section-title {
+font-weight: 600;
+margin: 1rem 0 0.5rem 0;
+font-size: 1rem;
+}
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 0.5rem 1rem;
+}
+label {
+font-size: 0.9rem;
+font-weight: 500;
+display: block;
+margin-bottom: 0.15rem;
+}
+input, select {
+width: 100%;
+box-sizing: border-box;
+padding: 0.4rem 0.5rem;
+border-radius: 6px;
+border: 1px solid #d1d5db;
+font: inherit;
+background: #f9fafb;
+}
+.card {
+margin-top: 0.75rem;
+padding: 0.75rem;
+border-radius: 10px;
+border: 1px solid #e5e7eb;
+background: #f9fafb;
+}
+.video-wrapper {
+width: 100%;
+max-width: 360px;
+height: 240px;
+margin: 0 auto;
+border-radius: 10px;
+overflow: hidden;
+border: 1px solid #e5e7eb;
+background: #000;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+video {
+transform-origin: center center;
+}
+.controls-row {
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+margin-top: 0.5rem;
+}
+button {
+border: none;
+border-radius: 999px;
+padding: 0.45rem 0.9rem;
+font: inherit;
+cursor: pointer;
+font-size: 0.9rem;
+display: inline-flex;
+align-items: center;
+gap: 0.25rem;
+}
+.btn-primary {
+background: #2563eb;
+color: #ffffff;
+}
+.btn-secondary {
+background: #e5e7eb;
+color: #111827;
+}
+.btn-danger {
+background: #dc2626;
+color: #ffffff;
+}
+.small-label {
+font-size: 0.8rem;
+color: #6b7280;
+margin-top: 0.25rem;
+}
+.result-row {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+font-size: 0.9rem;
+}
+.result-item span:first-child {
+font-weight: 600;
+}
+.liveness-pass {
+color: #16a34a;
+font-weight: 600;
+}
+.liveness-borderline {
+color: #d97706;
+font-weight: 600;
+}
+.liveness-suspicious {
+color: #dc2626;
+font-weight: 600;
+}
+footer {
+margin-top: 1rem;
+font-size: 0.75rem;
+color: #6b7280;
+text-align: center;
+}
+@media (max-width: 640px) {
+body {
+padding: 0.75rem;
+}
+.app {
+padding: 0.75rem;
+}
+.video-wrapper {
+max-width: 100%;
+}
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
-    <p class="meta">
-      This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological-style signal analysis. It does not replace official identity, licence or clinical verification processes.
-    </p>
+<div class="app">
+<h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
+<p class="meta">
+This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological-style signal analysis. It does not replace official identity, licence or clinical verification processes.
+</p>
 
-    <!-- HCP DATA -->
-    <div>
-      <div class="section-title">1. Healthcare Professional</div>
-      <div class="grid">
-        <div>
-          <label for="hcpName">Name *</label>
-          <input type="text" id="hcpName" placeholder="Full name" required />
-        </div>
-        <div>
-          <label for="hcpRole">Profession / Role *</label>
-          <input type="text" id="hcpRole" placeholder="e.g. Physiotherapist, MD, Nurse" required />
-        </div>
-        <div>
-          <label for="licenseNumber">Licence Number *</label>
-          <input type="text" id="licenseNumber" placeholder="Licence / Registration ID" required />
-        </div>
-      </div>
-      <div class="grid" style="margin-top:0.5rem;">
-        <div>
-          <label for="licenseAuthority">Issuing Authority</label>
-          <input type="text" id="licenseAuthority" placeholder="e.g. State Medical Board" />
-        </div>
-        <div>
-          <label for="licenseCountry">Licence Country</label>
-          <input type="text" id="licenseCountry" placeholder="e.g. DE, AE, LY" />
-        </div>
-        <div>
-          <label for="licenseExpiry">Licence Expiry</label>
-          <input type="date" id="licenseExpiry" />
-        </div>
-      </div>
-    </div>
+<!-- HCP DATA -->
+<div>
+<div class="section-title">1. Healthcare Professional</div>
+<div class="grid">
+<div>
+<label for="hcpName">Name *</label>
+<input type="text" id="hcpName" placeholder="Full name" required />
+</div>
+<div>
+<label for="hcpRole">Profession / Role *</label>
+<input type="text" id="hcpRole" placeholder="e.g. Physiotherapist, MD, Nurse" required />
+</div>
+<div>
+<label for="licenseNumber">Licence Number *</label>
+<input type="text" id="licenseNumber" placeholder="Licence / Registration ID" required />
+</div>
+</div>
+<div class="grid" style="margin-top:0.5rem;">
+<div>
+<label for="licenseAuthority">Issuing Authority</label>
+<input type="text" id="licenseAuthority" placeholder="e.g. State Medical Board" />
+</div>
+<div>
+<label for="licenseCountry">Licence Country</label>
+<input type="text" id="licenseCountry" placeholder="e.g. DE, AE, LY" />
+</div>
+<div>
+<label for="licenseExpiry">Licence Expiry</label>
+<input type="date" id="licenseExpiry" />
+</div>
+</div>
+</div>
 
-    <!-- CAMERA + LIVENESS -->
-    <div class="card">
-      <div class="section-title">2. Camera Liveness Check</div>
+<!-- CAMERA + LIVENESS -->
+<div class="card">
+<div class="section-title">2. Camera Liveness Check</div>
 
-      <div class="video-wrapper">
-        <video id="video" autoplay muted playsinline></video>
-        <canvas id="canvas" width="160" height="120" style="display:none;"></canvas>
-      </div>
+<div class="video-wrapper">
+<video id="video" autoplay muted playsinline></video>
+<canvas id="canvas" width="160" height="120" style="display:none;"></canvas>
+</div>
 
-      <div class="controls-row">
-        <button type="button" class="btn-secondary" id="startCameraBtn">Start Camera</button>
-        <button type="button" class="btn-secondary" id="stopCameraBtn">Stop Camera</button>
-        <button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~10s)</button>
-      </div>
+<div class="controls-row">
+<button type="button" class="btn-secondary" id="startCameraBtn">Start Camera</button>
+<button type="button" class="btn-secondary" id="stopCameraBtn">Stop Camera</button>
+<button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~10s)</button>
+</div>
 
-      <div class="controls-row">
-        <div>
-          <label class="small-label" for="zoomRange">Zoom</label>
-          <input type="range" id="zoomRange" min="1" max="2" step="0.1" value="1" />
-        </div>
-        <div>
-          <label class="small-label" for="sensitivitySelect">Light / Sensitivity</label>
-          <select id="sensitivitySelect">
-            <option value="normal">Normal</option>
-            <option value="high">Low-light / High sensitivity</option>
-          </select>
-        </div>
-      </div>
+<div class="controls-row">
+<div>
+<label class="small-label" for="zoomRange">Zoom</label>
+<input type="range" id="zoomRange" min="1" max="2" step="0.1" value="1" />
+</div>
+<div>
+<label class="small-label" for="sensitivitySelect">Light / Sensitivity</label>
+<select id="sensitivitySelect">
+<option value="normal">Normal</option>
+<option value="high">Low-light / High sensitivity</option>
+</select>
+</div>
+</div>
 
-      <p id="status" class="meta" style="margin-top:0.5rem;">
-        Status: Camera not started.
-      </p>
+<p id="status" class="meta" style="margin-top:0.5rem;">
+Status: Camera not started.
+</p>
 
-      <div class="result-row">
-        <div class="result-item">
-          <span>Liveness score:</span>
-          <span id="livenessScoreValue">–</span>
-        </div>
-        <div class="result-item">
-          <span>HR:</span>
-          <span id="livenessHrValue">–</span>
-        </div>
-        <div class="result-item">
-          <span>Signal quality:</span>
-          <span id="signalQualityValue">–</span>
-        </div>
-        <div class="result-item">
-          <span>Frame variance:</span>
-          <span id="roiCorrelationValue">–</span>
-        </div>
-      </div>
-      <p id="livenessConclusion" class="meta" style="margin-top:0.5rem;"></p>
-    </div>
+<div class="result-row">
+<div class="result-item">
+<span>Liveness score:</span>
+<span id="livenessScoreValue">–</span>
+</div>
+<div class="result-item">
+<span>HR:</span>
+<span id="livenessHrValue">–</span>
+</div>
+<div class="result-item">
+<span>Signal quality:</span>
+<span id="signalQualityValue">–</span>
+</div>
+<div class="result-item">
+<span>Frame variance:</span>
+<span id="roiCorrelationValue">–</span>
+</div>
+</div>
+<p id="livenessConclusion" class="meta" style="margin-top:0.5rem;"></p>
+</div>
 
-    <!-- SAVE -->
-    <div class="card">
-      <div class="section-title">3. Save Verification (Local)</div>
-      <button type="button" class="btn-primary" id="saveBtn">Save Entry Locally</button>
-      <button type="button" class="btn-secondary" id="exportBtn">Export CSV</button>
-      <button type="button" class="btn-danger" id="clearBtn">Delete All Local Entries</button>
-      <p id="saveInfo" class="meta" style="margin-top:0.4rem;">No entries saved yet.</p>
-    </div>
+<!-- SAVE -->
+<div class="card">
+<div class="section-title">3. Save Verification (Local)</div>
+<button type="button" class="btn-primary" id="saveBtn">Save Entry Locally</button>
+<button type="button" class="btn-secondary" id="exportBtn">Export CSV</button>
+<button type="button" class="btn-danger" id="clearBtn">Delete All Local Entries</button>
+<p id="saveInfo" class="meta" style="margin-top:0.4rem;">No entries saved yet.</p>
+</div>
 
-    <footer>
-      Disclaimer: Anti-deepfake liveness indicators are auxiliary and do not replace official identity, licence or clinical verification processes.  
-      Developer: Mr. Moustafa Mohammed Elsayed Elsayed Ali – Contact: mostischmidbauer@web.de · +49 1522 5231568.
-    </footer>
-  </div>
+<footer>
+Disclaimer: Anti-deepfake liveness indicators are auxiliary and do not replace official identity, licence or clinical verification processes.
+Developer: Mr. Moustafa Mohammed Elsayed Elsayed Ali – Contact: mostischmidbauer@web.de · +49 1522 5231568.
+</footer>
+</div>
 
-  <script>
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
-    const startCameraBtn = document.getElementById("startCameraBtn");
-    const stopCameraBtn = document.getElementById("stopCameraBtn");
-    const runLivenessBtn = document.getElementById("runLivenessBtn");
-    const zoomRange = document.getElementById("zoomRange");
-    const sensitivitySelect = document.getElementById("sensitivitySelect");
-    const statusEl = document.getElementById("status");
+<script>
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const startCameraBtn = document.getElementById("startCameraBtn");
+const stopCameraBtn = document.getElementById("stopCameraBtn");
+const runLivenessBtn = document.getElementById("runLivenessBtn");
+const zoomRange = document.getElementById("zoomRange");
+const sensitivitySelect = document.getElementById("sensitivitySelect");
+const statusEl = document.getElementById("status");
 
-    const livenessScoreValue = document.getElementById("livenessScoreValue");
-    const livenessHrValue = document.getElementById("livenessHrValue");
-    const signalQualityValue = document.getElementById("signalQualityValue");
-    const roiCorrelationValue = document.getElementById("roiCorrelationValue");
-    const livenessConclusion = document.getElementById("livenessConclusion");
-    const saveInfo = document.getElementById("saveInfo");
+const livenessScoreValue = document.getElementById("livenessScoreValue");
+const livenessHrValue = document.getElementById("livenessHrValue");
+const signalQualityValue = document.getElementById("signalQualityValue");
+const roiCorrelationValue = document.getElementById("roiCorrelationValue");
+const livenessConclusion = document.getElementById("livenessConclusion");
+const saveInfo = document.getElementById("saveInfo");
 
-    let stream = null;
-    let animId = null;
-    let countdownTimer = null;
-    let collecting = false;
+let stream = null;
+let animId = null;
+let countdownTimer = null;
+let collecting = false;
 
-    const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v1";
+const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v1";
 
-    function setVideoZoom() {
-      const zoom = parseFloat(zoomRange.value);
-      video.style.transform = `scale(${zoom})`;
-    }
-    zoomRange.addEventListener("input", setVideoZoom);
+function setVideoZoom() {
+const zoom = parseFloat(zoomRange.value);
+video.style.transform = `scale(${zoom})`;
+}
+zoomRange.addEventListener("input", setVideoZoom);
 
-    async function startCamera() {
-      if (stream) {
-        statusEl.textContent = "Status: Camera already running.";
-        return;
-      }
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480, facingMode: "user" },
-          audio: false
-        });
-        video.srcObject = stream;
-        statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "Status: Unable to access camera. Check permissions or run over HTTPS.";
-      }
-    }
+async function startCamera() {
+if (stream) {
+statusEl.textContent = "Status: Camera already running.";
+return;
+}
+try {
+stream = await navigator.mediaDevices.getUserMedia({
+video: { width: 640, height: 480, facingMode: "user" },
+audio: false
+});
+video.srcObject = stream;
+statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
+} catch (err) {
+console.error(err);
+statusEl.textContent = "Status: Unable to access camera. Check permissions or run over HTTPS.";
+}
+}
 
-    function stopCamera() {
-      if (animId) {
-        cancelAnimationFrame(animId);
-        animId = null;
-      }
-      if (countdownTimer) {
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-      }
-      if (stream) {
-        stream.getTracks().forEach(t => t.stop());
-        stream = null;
-      }
-      video.srcObject = null;
-      collecting = false;
-      statusEl.textContent = "Status: Camera stopped.";
-      runLivenessBtn.disabled = false;
-    }
+function stopCamera() {
+if (animId) {
+cancelAnimationFrame(animId);
+animId = null;
+}
+if (countdownTimer) {
+clearInterval(countdownTimer);
+countdownTimer = null;
+}
+if (stream) {
+stream.getTracks().forEach(t => t.stop());
+stream = null;
+}
+video.srcObject = null;
+collecting = false;
+statusEl.textContent = "Status: Camera stopped.";
+runLivenessBtn.disabled = false;
+}
 
-    function computeSignalQualitySimple(signal) {
-      if (!signal || signal.length < 10) return 0;
-      const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-      const detr = signal.map(v => v - mean);
-      let sumSq = 0;
-      for (const v of detr) sumSq += v * v;
-      const std = Math.sqrt(sumSq / detr.length) || 0;
-      return std; // simple variance-based measure
-    }
+// Simple brightness-based variation metric
+function computeSignalQualitySimple(signal) {
+if (!signal || signal.length < 10) return 0;
+const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
+const detr = signal.map(v => v - mean);
+let sumSq = 0;
+for (const v of detr) sumSq += v * v;
+const std = Math.sqrt(sumSq / detr.length) || 0;
+return std;
+}
 
-    function computeLivenessScoreSimple(quality) {
-      // quality ~= brightness variability
-      let score;
-      if (quality > 8) score = 90;        // strong variability → likely live
-      else if (quality > 4) score = 70;   // medium
-      else if (quality > 2) score = 55;   // borderline
-      else score = 30;                    // almost no variation → suspicious
+// Estimate HR from brightness series + timestamps (very simple demo)
+function computeHrFromSignalSimple(signal, timestamps, sensitivity) {
+if (!signal || signal.length < 50) return null;
+const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
+const detr = signal.map(v => v - mean);
 
-      let labelClass = "";
-      let conclusion;
-      if (score >= 75) {
-        labelClass = "liveness-pass";
-        conclusion = "Liveness PASS – strong variation consistent with live video.";
-      } else if (score >= 50) {
-        labelClass = "liveness-borderline";
-        conclusion = "Liveness BORDERLINE – limited variation; repeat or verify with additional methods.";
-      } else {
-        labelClass = "liveness-suspicious";
-        conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static or spoofed content.";
-      }
-      return { score, labelClass, conclusion };
-    }
+// basic smoothing
+const smoothed = [];
+const w = 3;
+for (let i = 0; i < detr.length; i++) {
+let s = 0, c = 0;
+for (let j = -w; j <= w; j++) {
+const idx = i + j;
+if (idx >= 0 && idx < detr.length) {
+s += detr[idx];
+c++;
+}
+}
+smoothed.push(s / c);
+}
 
-    function runLivenessCheck() {
-      if (!video || !video.srcObject) {
-        statusEl.textContent = "Status: Start the camera before running a liveness check.";
-        return;
-      }
-      if (collecting) {
-        statusEl.textContent = "Status: A measurement is already running. Please wait.";
-        return;
-      }
+const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
+if (maxAmp === 0) return null;
 
-      collecting = true;
-      let remaining = 10; // seconds
-      runLivenessBtn.disabled = true;
+let baseThr = 0.5;
+if (sensitivity === "high") baseThr = 0.3;
+const thr = maxAmp * baseThr;
 
-      statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
+const peakTimes = [];
+for (let i = 1; i < smoothed.length - 1; i++) {
+const prev = smoothed[i - 1];
+const curr = smoothed[i];
+const next = smoothed[i + 1];
+if (curr > prev && curr > next && curr > thr) {
+peakTimes.push(timestamps[i]);
+}
+}
 
-      if (countdownTimer) clearInterval(countdownTimer);
-      countdownTimer = setInterval(() => {
-        remaining -= 1;
-        if (remaining > 0 && collecting) {
-          statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s left).`;
-        }
-      }, 1000);
+if (peakTimes.length < 3) return null;
 
-      const ctx = canvas.getContext("2d");
-      const durationMs = 10000;
-      const startTime = performance.now();
+const intervals = [];
+for (let i = 1; i < peakTimes.length; i++) {
+intervals.push(peakTimes[i] - peakTimes[i - 1]);
+}
+intervals.sort((a, b) => a - b);
+const mid = Math.floor(intervals.length / 2);
+const medianMs =
+intervals.length % 2 === 0
+? (intervals[mid - 1] + intervals[mid]) / 2
+: intervals[mid];
 
-      const brightnessSeries = [];
-      const timestamps = [];
+if (!medianMs || medianMs <= 0) return null;
+const bpm = 60000 / medianMs;
+if (bpm < 40 || bpm > 180) return null;
+return bpm;
+}
 
-      function collect(now) {
-        if (!collecting) return;
+// Liveness score based on brightness variability
+function computeLivenessScoreSimple(quality) {
+let score;
+if (quality > 8) score = 90;
+else if (quality > 4) score = 70;
+else if (quality > 2) score = 55;
+else score = 30;
 
-        const elapsed = now - startTime;
-        if (elapsed >= durationMs) {
-          collecting = false;
-          if (animId) {
-            cancelAnimationFrame(animId);
-            animId = null;
-          }
-          if (countdownTimer) {
-            clearInterval(countdownTimer);
-            countdownTimer = null;
-          }
-          runLivenessBtn.disabled = false;
-          processLivenessSimple(brightnessSeries, timestamps);
-          return;
-        }
+let labelClass = "";
+let conclusion;
+if (score >= 75) {
+labelClass = "liveness-pass";
+conclusion = "Liveness PASS – strong variation consistent with live video.";
+} else if (score >= 50) {
+labelClass = "liveness-borderline";
+conclusion = "Liveness BORDERLINE – limited variation; repeat or verify with additional methods.";
+} else {
+labelClass = "liveness-suspicious";
+conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static or spoofed content.";
+}
+return { score, labelClass, conclusion };
+}
 
-        const w = canvas.width;
-        const h = canvas.height;
-        ctx.drawImage(video, 0, 0, w, h);
+function runLivenessCheck() {
+if (!video || !video.srcObject) {
+statusEl.textContent = "Status: Start the camera before running a liveness check.";
+return;
+}
+if (collecting) {
+statusEl.textContent = "Status: A measurement is already running. Please wait.";
+return;
+}
 
-        const frame = ctx.getImageData(0, 0, w, h);
-        const d = frame.data;
-        let sum = 0, c = 0;
-        for (let i = 0; i < d.length; i += 4) {
-          // luminance approximation
-          const r = d[i], g = d[i+1], b = d[i+2];
-          const lum = 0.299*r + 0.587*g + 0.114*b;
-          sum += lum;
-          c++;
-        }
-        const avgLum = c ? sum / c : 0;
-        brightnessSeries.push(avgLum);
-        timestamps.push(now);
+collecting = true;
+let remaining = 10; // seconds
+runLivenessBtn.disabled = true;
 
-        animId = requestAnimationFrame(collect);
-      }
+statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
 
-      animId = requestAnimationFrame(collect);
-    }
+if (countdownTimer) clearInterval(countdownTimer);
+countdownTimer = setInterval(() => {
+remaining -= 1;
+if (remaining > 0 && collecting) {
+statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s left).`;
+}
+}, 1000);
 
-    function processLivenessSimple(brightnessSeries, timestamps) {
-      const sensitivity = sensitivitySelect.value || "normal";
+const ctx = canvas.getContext("2d");
+const durationMs = 10000;
+const startTime = performance.now();
 
-      // Adjust quality by sensitivity (roughly)
-      let quality = computeSignalQualitySimple(brightnessSeries);
-      if (sensitivity === "high") {
-        quality *= 1.5;
-      }
+const brightnessSeries = [];
+const timestamps = [];
 
-      const { score, labelClass, conclusion } = computeLivenessScoreSimple(quality);
+function collect(now) {
+if (!collecting) return;
 
-      livenessScoreValue.textContent = score.toFixed(0);
-      livenessScoreValue.className = "meta liveness-value " + labelClass;
+const elapsed = now - startTime;
+if (elapsed >= durationMs) {
+collecting = false;
+if (animId) {
+cancelAnimationFrame(animId);
+animId = null;
+}
+if (countdownTimer) {
+clearInterval(countdownTimer);
+countdownTimer = null;
+}
+runLivenessBtn.disabled = false;
+processLivenessSimple(brightnessSeries, timestamps);
+return;
+}
 
-      // HR not computed in this simple version
-      livenessHrValue.textContent = "–";
+const w = canvas.width;
+const h = canvas.height;
+ctx.drawImage(video, 0, 0, w, h);
 
-      signalQualityValue.textContent = quality.toFixed(2);
-      roiCorrelationValue.textContent = `std(b)=${quality.toFixed(2)}`;
+const frame = ctx.getImageData(0, 0, w, h);
+const d = frame.data;
+let sum = 0, c = 0;
+for (let i = 0; i < d.length; i += 4) {
+const r = d[i], g = d[i+1], b = d[i+2];
+const lum = 0.299*r + 0.587*g + 0.114*b;
+sum += lum;
+c++;
+}
+const avgLum = c ? sum / c : 0;
+brightnessSeries.push(avgLum);
+timestamps.push(now);
 
-      livenessConclusion.textContent = conclusion;
-      statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
-    }
+animId = requestAnimationFrame(collect);
+}
 
-    function loadEntries() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
+animId = requestAnimationFrame(collect);
+}
 
-    function saveEntries(list) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    }
+function processLivenessSimple(brightnessSeries, timestamps) {
+const sensitivity = sensitivitySelect.value || "normal";
 
-    function refreshSaveInfo() {
-      const entries = loadEntries();
-      if (!entries.length) {
-        saveInfo.textContent = "No entries saved yet.";
-      } else {
-        saveInfo.textContent = `${entries.length} entr(y/ies) stored locally in this browser.`;
-      }
-    }
+let quality = computeSignalQualitySimple(brightnessSeries);
+if (sensitivity === "high") {
+quality *= 1.5;
+}
 
-    function saveEntry() {
-      const hcpName = document.getElementById("hcpName").value.trim();
-      const hcpRole = document.getElementById("hcpRole").value.trim();
-      const licenseNumber = document.getElementById("licenseNumber").value.trim();
-      const licenseAuthority = document.getElementById("licenseAuthority").value.trim();
-      const licenseCountry = document.getElementById("licenseCountry").value.trim();
-      const licenseExpiry = document.getElementById("licenseExpiry").value;
-      const score = livenessScoreValue.textContent;
-      const hr = livenessHrValue.textContent;
-      const signalQ = signalQualityValue.textContent;
-      const roiC = roiCorrelationValue.textContent;
-      const timestamp = new Date().toISOString();
+// HR estimate (simple demo)
+const hr = computeHrFromSignalSimple(brightnessSeries, timestamps, sensitivity);
 
-      if (!hcpName || !hcpRole || !licenseNumber) {
-        alert("Please fill in name, profession and licence number before saving.");
-        return;
-      }
+const { score, labelClass, conclusion } = computeLivenessScoreSimple(quality);
 
-      const entry = {
-        hcpName,
-        hcpRole,
-        licenseNumber,
-        licenseAuthority,
-        licenseCountry,
-        licenseExpiry,
-        livenessScore: score,
-        hr,
-        signalQuality: signalQ,
-        roiCorrelation: roiC,
-        timestamp
-      };
+livenessScoreValue.textContent = score.toFixed(0);
+livenessScoreValue.className = "meta liveness-value " + labelClass;
 
-      const entries = loadEntries();
-      entries.push(entry);
-      saveEntries(entries);
-      refreshSaveInfo();
-      alert("Entry saved locally on this device.");
-    }
+if (hr) {
+livenessHrValue.textContent = `${hr.toFixed(0)} bpm`;
+} else {
+livenessHrValue.textContent = "–";
+}
 
-    function exportCsv() {
-      const entries = loadEntries();
-      if (!entries.length) {
-        alert("No entries to export.");
-        return;
-      }
-      const headers = [
-        "timestamp","hcpName","hcpRole","licenseNumber",
-        "licenseAuthority","licenseCountry","licenseExpiry",
-        "livenessScore","hr","signalQuality","roiCorrelation"
-      ];
-      const rows = [];
-      rows.push(headers.join(","));
-      entries.forEach(e => {
-        const row = headers.map(h => {
-          const val = e[h] || "";
-          const escaped = String(val).replace(/"/g, '""');
-          return `"${escaped}"`;
-        }).join(",");
-        rows.push(row);
-      });
-      const blob = new Blob([rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "hcp-anti-deepfake-log.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+signalQualityValue.textContent = quality.toFixed(2);
+roiCorrelationValue.textContent = `std(b)=${quality.toFixed(2)}`;
 
-    function clearEntries() {
-      if (!confirm("Delete all locally stored entries?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      refreshSaveInfo();
-    }
+livenessConclusion.textContent = conclusion;
+statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
+}
 
-    document.getElementById("saveBtn").addEventListener("click", saveEntry);
-    document.getElementById("exportBtn").addEventListener("click", exportCsv);
-    document.getElementById("clearBtn").addEventListener("click", clearEntries);
+function loadEntries() {
+try {
+const raw = localStorage.getItem(STORAGE_KEY);
+if (!raw) return [];
+const parsed = JSON.parse(raw);
+return Array.isArray(parsed) ? parsed : [];
+} catch {
+return [];
+}
+}
 
-    startCameraBtn.addEventListener("click", startCamera);
-    stopCameraBtn.addEventListener("click", stopCamera);
-    runLivenessBtn.addEventListener("click", runLiveness);
-    setVideoZoom();
-    refreshSaveInfo();
+function saveEntries(list) {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
 
-    window.addEventListener("beforeunload", () => {
-      stopCamera();
-    });
-  </script>
+function refreshSaveInfo() {
+const entries = loadEntries();
+if (!entries.length) {
+saveInfo.textContent = "No entries saved yet.";
+} else {
+saveInfo.textContent = `${entries.length} entr(y/ies) stored locally in this browser.`;
+}
+}
+
+function saveEntry() {
+const hcpName = document.getElementById("hcpName").value.trim();
+const hcpRole = document.getElementById("hcpRole").value.trim();
+const licenseNumber = document.getElementById("licenseNumber").value.trim();
+const licenseAuthority = document.getElementById("licenseAuthority").value.trim();
+const licenseCountry = document.getElementById("licenseCountry").value.trim();
+const licenseExpiry = document.getElementById("licenseExpiry").value;
+const score = livenessScoreValue.textContent;
+const hr = livenessHrValue.textContent;
+const signalQ = signalQualityValue.textContent;
+const roiC = roiCorrelationValue.textContent;
+const timestamp = new Date().toISOString();
+
+if (!hcpName || !hcpRole || !licenseNumber) {
+alert("Please fill in name, profession and licence number before saving.");
+return;
+}
+
+const entry = {
+hcpName,
+hcpRole,
+licenseNumber,
+licenseAuthority,
+licenseCountry,
+licenseExpiry,
+livenessScore: score,
+hr,
+signalQuality: signalQ,
+roiCorrelation: roiC,
+timestamp
+};
+
+const entries = loadEntries();
+entries.push(entry);
+saveEntries(entries);
+refreshSaveInfo();
+alert("Entry saved locally on this device.");
+}
+
+function exportCsv() {
+const entries = loadEntries();
+if (!entries.length) {
+alert("No entries to export.");
+return;
+}
+const headers = [
+"timestamp","hcpName","hcpRole","licenseNumber",
+"licenseAuthority","licenseCountry","licenseExpiry",
+"livenessScore","hr","signalQuality","roiCorrelation"
+];
+const rows = [];
+rows.push(headers.join(","));
+entries.forEach(e => {
+const row = headers.map(h => {
+const val = e[h] || "";
+const escaped = String(val).replace(/"/g, '""');
+return `"${escaped}"`;
+}).join(",");
+rows.push(row);
+});
+const blob = new Blob([rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = "hcp-anti-deepfake-log.csv";
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+}
+
+function clearEntries() {
+if (!confirm("Delete all locally stored entries?")) return;
+localStorage.removeItem(STORAGE_KEY);
+refreshSaveInfo();
+}
+
+document.getElementById("saveBtn").addEventListener("click", saveEntry);
+document.getElementById("exportBtn").addEventListener("click", exportCsv);
+document.getElementById("clearBtn").addEventListener("click", clearEntries);
+
+startCameraBtn.addEventListener("click", startCamera);
+stopCameraBtn.addEventListener("click", stopCamera);
+runLivenessBtn.addEventListener("click", runLiveness);
+setVideoZoom();
+refreshSaveInfo();
+
+window.addEventListener("beforeunload", () => {
+stopCamera();
+});
+</script>
 </body>
 </html>
-
-
