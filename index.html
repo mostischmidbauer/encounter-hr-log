@@ -22,19 +22,10 @@ background: #ffffff;
 padding: 1.25rem;
 border-radius: 12px;
 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-position: relative;
-z-index: 1;
 }
 h1 {
 margin: 0 0 0.5rem 0;
 font-size: 1.4rem;
-}
-.top-row {
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-gap: 0.75rem;
-flex-wrap: wrap;
 }
 .meta {
 font-size: 0.85rem;
@@ -118,10 +109,6 @@ color: #111827;
 background: #dc2626;
 color: #ffffff;
 }
-.btn-help {
-background: #fbbf24;
-color: #111827;
-}
 .small-label {
 font-size: 0.8rem;
 color: #6b7280;
@@ -154,61 +141,6 @@ font-size: 0.75rem;
 color: #6b7280;
 text-align: center;
 }
-
-/* HELP MODAL */
-.modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(15, 23, 42, 0.65);
-display: none;
-align-items: center;
-justify-content: center;
-z-index: 50;
-}
-.modal-overlay.active {
-display: flex;
-}
-.modal-content {
-background: #ffffff;
-max-width: 800px;
-max-height: 80vh;
-padding: 1rem 1.25rem;
-border-radius: 14px;
-box-shadow: 0 24px 50px rgba(0,0,0,0.25);
-overflow-y: auto;
-}
-.modal-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 0.75rem;
-margin-bottom: 0.5rem;
-}
-.modal-header h2 {
-margin: 0;
-font-size: 1.1rem;
-}
-.modal-close-btn {
-border: none;
-border-radius: 999px;
-background: #e5e7eb;
-padding: 0.15rem 0.6rem;
-cursor: pointer;
-font-size: 0.9rem;
-}
-.modal-body {
-font-size: 0.85rem;
-color: #374151;
-}
-.modal-body h3 {
-margin: 0.75rem 0 0.25rem 0;
-font-size: 0.95rem;
-}
-.modal-body ul {
-padding-left: 1.1rem;
-margin: 0.15rem 0 0.4rem 0;
-}
-
 @media (max-width: 640px) {
 body {
 padding: 0.75rem;
@@ -219,24 +151,15 @@ padding: 0.75rem;
 .video-wrapper {
 max-width: 100%;
 }
-.modal-content {
-width: 94%;
-max-height: 85vh;
-}
 }
 </style>
 </head>
 <body>
 <div class="app">
-<div class="top-row">
-<div>
 <h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
 <p class="meta">
-This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological-style signal analysis. It does not replace official identity, licence or clinical verification processes.
+This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on optical signal variation. It does not replace official identity, licence or clinical verification processes.
 </p>
-</div>
-<button type="button" class="btn-help" id="helpBtn">Help / User Manual</button>
-</div>
 
 <!-- HCP DATA -->
 <div>
@@ -318,7 +241,7 @@ Status: Camera not started.
 <span id="signalQualityValue">–</span>
 </div>
 <div class="result-item">
-<span>Frame variance:</span>
+<span>Brightness std:</span>
 <span id="roiCorrelationValue">–</span>
 </div>
 </div>
@@ -340,69 +263,6 @@ Developer: Mr. Moustafa Mohammed Elsayed Elsayed Ali – Contact: mostischmidbau
 </footer>
 </div>
 
-<!-- HELP MODAL -->
-<div class="modal-overlay" id="helpModal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>User Manual – HCP Anti-Deepfake Liveness & Licence Check</h2>
-<button class="modal-close-btn" id="closeHelpBtn">✕</button>
-</div>
-<div class="modal-body">
-<h3>1. Purpose</h3>
-<p>
-This tool helps document healthcare professional licence details and provides an additional camera-based anti-deepfake
-liveness check. It is an auxiliary security and integrity layer and must always be combined with official identity,
-licence and clinical verification processes.
-</p>
-
-<h3>2. Setup & Positioning</h3>
-<ul>
-<li>Use a laptop/desktop webcam where possible.</li>
-<li>Sit 40–70 cm from the camera.</li>
-<li>Center your face in the frame and use the Zoom slider so the face fills most of the preview.</li>
-<li>Use soft, even light from in front of you. Avoid strong backlight or heavy shadows.</li>
-</ul>
-
-<h3>3. Running a Liveness Check</h3>
-<ul>
-<li>Click <strong>Start Camera</strong> and allow browser camera permission.</li>
-<li>Adjust <strong>Zoom</strong> and <strong>Light / Sensitivity</strong> (Normal or Low-light).</li>
-<li>Keep your head relatively still and look at the camera.</li>
-<li>Click <strong>Run Liveness Check (~10s)</strong>.</li>
-<li>Stay still while the countdown runs; do not talk or move excessively.</li>
-</ul>
-
-<h3>4. Understanding the Results</h3>
-<ul>
-<li><strong>Liveness score (0–100)</strong>: higher means stronger evidence of live video.</li>
-<li><strong>HR</strong>: simple camera-based estimate in bpm (may be “–” if the signal is weak).</li>
-<li><strong>Signal quality</strong>: numerical indicator of how strong and usable the variation is.</li>
-<li><strong>Frame variance</strong>: raw measure of brightness variability; higher is generally better.</li>
-</ul>
-<p>
-<strong>PASS</strong> (≈75–100): strong natural variation consistent with live presence.
-<strong>BORDERLINE</strong> (≈50–74): mixed or limited variation; repeat or verify with additional methods.
-<strong>SUSPICIOUS</strong> (&lt;50): very low variation; treat as high fraud risk and use strong identity verification.
-</p>
-
-<h3>5. Saving & Exporting</h3>
-<ul>
-<li>Use <strong>Save Entry Locally</strong> to store licence + liveness + HR data in this browser.</li>
-<li>Use <strong>Export CSV</strong> to generate a log file for compliance, audits or insurer/regulator review.</li>
-<li>Use <strong>Delete All Local Entries</strong> to clear all stored data from this device.</li>
-</ul>
-
-<h3>6. Privacy & Limitations</h3>
-<ul>
-<li>All data stays locally in your browser unless you export CSV.</li>
-<li>There is no server, no cloud, and no external transmission in this application.</li>
-<li>The tool does not perform identity proofing, certified licence validation, or clinical decision-making.</li>
-<li>It is intended as a non-medical, non-diagnostic security/support layer for telehealth, insurers and regulators.</li>
-</ul>
-</div>
-</div>
-</div>
-
 <script>
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
@@ -420,16 +280,12 @@ const roiCorrelationValue = document.getElementById("roiCorrelationValue");
 const livenessConclusion = document.getElementById("livenessConclusion");
 const saveInfo = document.getElementById("saveInfo");
 
-const helpBtn = document.getElementById("helpBtn");
-const helpModal = document.getElementById("helpModal");
-const closeHelpBtn = document.getElementById("closeHelpBtn");
-
 let stream = null;
-let animId = null;
+let sampleTimer = null;
 let countdownTimer = null;
-let collecting = false;
+let isRunning = false;
 
-const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v1";
+const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v2";
 
 function setVideoZoom() {
 const zoom = parseFloat(zoomRange.value);
@@ -451,14 +307,14 @@ video.srcObject = stream;
 statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
 } catch (err) {
 console.error(err);
-statusEl.textContent = "Status: Unable to access camera. Check permissions or run over HTTPS.";
+statusEl.textContent = "Status: Unable to access camera. Use HTTPS and allow camera permissions.";
 }
 }
 
 function stopCamera() {
-if (animId) {
-cancelAnimationFrame(animId);
-animId = null;
+if (sampleTimer) {
+clearInterval(sampleTimer);
+sampleTimer = null;
 }
 if (countdownTimer) {
 clearInterval(countdownTimer);
@@ -469,33 +325,38 @@ stream.getTracks().forEach(t => t.stop());
 stream = null;
 }
 video.srcObject = null;
-collecting = false;
-statusEl.textContent = "Status: Camera stopped.";
+isRunning = false;
 runLivenessBtn.disabled = false;
+statusEl.textContent = "Status: Camera stopped.";
 }
 
-function computeSignalQualitySimple(signal) {
-if (!signal || signal.length < 10) return 0;
-const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-const detr = signal.map(v => v - mean);
+function computeStd(values) {
+if (!values || values.length < 2) return 0;
+const mean = values.reduce((a, b) => a + b, 0) / values.length;
 let sumSq = 0;
-for (const v of detr) sumSq += v * v;
-const std = Math.sqrt(sumSq / detr.length) || 0;
-return std; // simple variability measure
+for (const v of values) sumSq += (v - mean) * (v - mean);
+return Math.sqrt(sumSq / values.length);
 }
 
-function computeHrFromSignalSimple(signal, timestamps, sensitivity) {
-if (!signal || signal.length < 30) return null;
-const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-const detr = signal.map(v => v - mean);
+// Rough HR estimation from brightness signal (not clinical!)
+function computeHrFromSignal(brightness, timestamps, sensitivityMode) {
+if (!brightness || brightness.length < 30) return null;
 
+// detrend
+const mean = brightness.reduce((a, b) => a + b, 0) / brightness.length;
+const detr = brightness.map(v => v - mean);
+
+// simple smoothing
 const smoothed = [];
 const w = 3;
 for (let i = 0; i < detr.length; i++) {
 let s = 0, c = 0;
 for (let j = -w; j <= w; j++) {
 const idx = i + j;
-if (idx >= 0 && idx < detr.length) { s += detr[idx]; c++; }
+if (idx >= 0 && idx < detr.length) {
+s += detr[idx];
+c++;
+}
 }
 smoothed.push(s / c);
 }
@@ -503,16 +364,15 @@ smoothed.push(s / c);
 const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
 if (maxAmp === 0) return null;
 
-const baseThr = 0.5;
-const thrMultiplier = sensitivity === "high" ? 0.6 : 1;
-const thr = maxAmp * baseThr * thrMultiplier;
+let thr = maxAmp * 0.6;
+if (sensitivityMode === "high") thr = maxAmp * 0.4;
 
 const peakTimes = [];
 for (let i = 1; i < smoothed.length - 1; i++) {
 const prev = smoothed[i - 1];
 const curr = smoothed[i];
 const next = smoothed[i + 1];
-if (curr > prev && curr > next && Math.abs(curr) > thr) {
+if (curr > prev && curr > next && curr > thr) {
 peakTimes.push(timestamps[i]);
 }
 }
@@ -531,31 +391,36 @@ intervals.length % 2 === 0
 : intervals[mid];
 
 if (!medianMs || medianMs <= 0) return null;
-
 const bpm = 60000 / medianMs;
 if (bpm < 40 || bpm > 180) return null;
 return bpm;
 }
 
-function computeLivenessScoreSimple(quality) {
-let score;
-if (quality > 8) score = 90;
-else if (quality > 4) score = 70;
-else if (quality > 2) score = 55;
-else score = 30;
+function computeLivenessScore(quality, hasHr) {
+let score = 0;
+
+if (quality > 8) score += 50;
+else if (quality > 4) score += 35;
+else if (quality > 2) score += 20;
+else score += 10;
+
+if (hasHr) score += 30; // HR found → stronger sign of live human
+
+if (score > 100) score = 100;
 
 let labelClass = "";
 let conclusion;
 if (score >= 75) {
 labelClass = "liveness-pass";
-conclusion = "Liveness PASS – strong variation consistent with live video.";
+conclusion = "Liveness PASS – optical variation and HR estimate consistent with live video.";
 } else if (score >= 50) {
 labelClass = "liveness-borderline";
-conclusion = "Liveness BORDERLINE – limited variation; repeat or verify with additional methods.";
+conclusion = "Liveness BORDERLINE – limited variation; repeat or use additional verification.";
 } else {
 labelClass = "liveness-suspicious";
-conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static or spoofed content.";
+conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static, replay or synthetic content.";
 }
+
 return { score, labelClass, conclusion };
 }
 
@@ -564,96 +429,100 @@ if (!video || !video.srcObject) {
 statusEl.textContent = "Status: Start the camera before running a liveness check.";
 return;
 }
-if (collecting) {
+if (isRunning) {
 statusEl.textContent = "Status: A measurement is already running. Please wait.";
 return;
 }
 
-collecting = true;
-let remaining = 10; // seconds
+isRunning = true;
 runLivenessBtn.disabled = true;
 
-statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
+const ctx = canvas.getContext("2d");
+const durationMs = 10000;
+const sampleInterval = 100; // 10 Hz
+const brightnessSeries = [];
+const timestamps = [];
+
+let elapsed = 0;
+let remaining = durationMs / 1000;
+
+statusEl.textContent = `Status: Liveness check running… (~${remaining}s).`;
 
 if (countdownTimer) clearInterval(countdownTimer);
 countdownTimer = setInterval(() => {
 remaining -= 1;
-if (remaining > 0 && collecting) {
-statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s left).`;
+if (remaining > 0 && isRunning) {
+statusEl.textContent = `Status: Liveness check running… (~${remaining}s left).`;
 }
 }, 1000);
 
-const ctx = canvas.getContext("2d");
-const durationMs = 10000;
-const startTime = performance.now();
-
-const brightnessSeries = [];
-const timestamps = [];
-
-function collect(now) {
-if (!collecting) return;
-
-const elapsed = now - startTime;
-if (elapsed >= durationMs) {
-collecting = false;
-if (animId) {
-cancelAnimationFrame(animId);
-animId = null;
-}
-if (countdownTimer) {
-clearInterval(countdownTimer);
-countdownTimer = null;
-}
-runLivenessBtn.disabled = false;
-processLivenessSimple(brightnessSeries, timestamps);
-return;
-}
+if (sampleTimer) clearInterval(sampleTimer);
+sampleTimer = setInterval(() => {
+if (!isRunning) return;
+elapsed += sampleInterval;
 
 const w = canvas.width;
 const h = canvas.height;
-ctx.drawImage(video, 0, 0, w, h);
 
+if (video.videoWidth === 0 || video.videoHeight === 0) {
+// Camera not ready yet; skip this frame
+if (elapsed >= durationMs) finishLiveness(brightnessSeries, timestamps);
+return;
+}
+
+ctx.drawImage(video, 0, 0, w, h);
 const frame = ctx.getImageData(0, 0, w, h);
 const d = frame.data;
 let sum = 0, c = 0;
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], g = d[i+1], b = d[i+2];
-const lum = 0.299*r + 0.587*g + 0.114*b;
-sum += lum;
-c++;
+const lum = 0.299*r + 0.587*g + 0.114*b; // approximate luminance
+sum += lum; c++;
 }
 const avgLum = c ? sum / c : 0;
 brightnessSeries.push(avgLum);
-timestamps.push(now);
+timestamps.push(performance.now());
 
-animId = requestAnimationFrame(collect);
+if (elapsed >= durationMs) {
+finishLiveness(brightnessSeries, timestamps);
+}
+}, sampleInterval);
 }
 
-animId = requestAnimationFrame(collect);
+function finishLiveness(brightnessSeries, timestamps) {
+if (sampleTimer) {
+clearInterval(sampleTimer);
+sampleTimer = null;
 }
+if (countdownTimer) {
+clearInterval(countdownTimer);
+countdownTimer = null;
+}
+isRunning = false;
+runLivenessBtn.disabled = false;
 
-function processLivenessSimple(brightnessSeries, timestamps) {
 const sensitivity = sensitivitySelect.value || "normal";
-
-let quality = computeSignalQualitySimple(brightnessSeries);
+let quality = computeStd(brightnessSeries);
 if (sensitivity === "high") {
 quality *= 1.5;
 }
 
-const hrBpm = computeHrFromSignalSimple(brightnessSeries, timestamps, sensitivity);
-const { score, labelClass, conclusion } = computeLivenessScoreSimple(quality);
+const bpm = computeHrFromSignal(brightnessSeries, timestamps, sensitivity);
+const hasHr = bpm !== null;
+
+const { score, labelClass, conclusion } = computeLivenessScore(quality, hasHr);
 
 livenessScoreValue.textContent = score.toFixed(0);
 livenessScoreValue.className = "meta liveness-value " + labelClass;
 
-if (hrBpm) {
-livenessHrValue.textContent = `${hrBpm.toFixed(0)} bpm`;
+if (hasHr) {
+livenessHrValue.textContent = `${bpm.toFixed(0)} bpm`;
 } else {
 livenessHrValue.textContent = "–";
 }
 
 signalQualityValue.textContent = quality.toFixed(2);
-roiCorrelationValue.textContent = `std(b)=${quality.toFixed(2)}`;
+roiCorrelationValue.textContent = quality.toFixed(2); // just showing std(b) again
 
 livenessConclusion.textContent = conclusion;
 statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
@@ -766,25 +635,13 @@ document.getElementById("clearBtn").addEventListener("click", clearEntries);
 
 startCameraBtn.addEventListener("click", startCamera);
 stopCameraBtn.addEventListener("click", stopCamera);
-runLivenessBtn.addEventListener("click", runLiveness);
+runLivenessBtn.addEventListener("click", runLivenessCheck);
+
 setVideoZoom();
 refreshSaveInfo();
 
 window.addEventListener("beforeunload", () => {
 stopCamera();
-});
-
-// Help modal events
-helpBtn.addEventListener("click", () => {
-helpModal.classList.add("active");
-});
-closeHelpBtn.addEventListener("click", () => {
-helpModal.classList.remove("active");
-});
-helpModal.addEventListener("click", (e) => {
-if (e.target === helpModal) {
-helpModal.classList.remove("active");
-}
 });
 </script>
 </body>
