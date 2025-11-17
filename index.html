@@ -158,7 +158,7 @@ max-width: 100%;
 <div class="app">
 <h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
 <p class="meta">
-This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological-style signal analysis. It does not replace official identity, licence or clinical verification processes.
+This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on optical signal variation. It does not replace official identity, licence or clinical verification processes.
 </p>
 
 <!-- HCP DATA -->
@@ -241,7 +241,7 @@ Status: Camera not started.
 <span id="signalQualityValue">–</span>
 </div>
 <div class="result-item">
-<span>Frame variance:</span>
+<span>Brightness std:</span>
 <span id="roiCorrelationValue">–</span>
 </div>
 </div>
@@ -281,11 +281,11 @@ const livenessConclusion = document.getElementById("livenessConclusion");
 const saveInfo = document.getElementById("saveInfo");
 
 let stream = null;
-let animId = null;
+let sampleTimer = null;
 let countdownTimer = null;
-let collecting = false;
+let isRunning = false;
 
-const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v1";
+const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v2";
 
 function setVideoZoom() {
 const zoom = parseFloat(zoomRange.value);
@@ -307,14 +307,14 @@ video.srcObject = stream;
 statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
 } catch (err) {
 console.error(err);
-statusEl.textContent = "Status: Unable to access camera. Check permissions or run over HTTPS.";
+statusEl.textContent = "Status: Unable to access camera. Use HTTPS and allow camera permissions.";
 }
 }
 
 function stopCamera() {
-if (animId) {
-cancelAnimationFrame(animId);
-animId = null;
+if (sampleTimer) {
+clearInterval(sampleTimer);
+sampleTimer = null;
 }
 if (countdownTimer) {
 clearInterval(countdownTimer);
@@ -325,29 +325,28 @@ stream.getTracks().forEach(t => t.stop());
 stream = null;
 }
 video.srcObject = null;
-collecting = false;
-statusEl.textContent = "Status: Camera stopped.";
+isRunning = false;
 runLivenessBtn.disabled = false;
+statusEl.textContent = "Status: Camera stopped.";
 }
 
-// Simple brightness-based variation metric
-function computeSignalQualitySimple(signal) {
-if (!signal || signal.length < 10) return 0;
-const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-const detr = signal.map(v => v - mean);
+function computeStd(values) {
+if (!values || values.length < 2) return 0;
+const mean = values.reduce((a, b) => a + b, 0) / values.length;
 let sumSq = 0;
-for (const v of detr) sumSq += v * v;
-const std = Math.sqrt(sumSq / detr.length) || 0;
-return std;
+for (const v of values) sumSq += (v - mean) * (v - mean);
+return Math.sqrt(sumSq / values.length);
 }
 
-// Estimate HR from brightness series + timestamps (very simple demo)
-function computeHrFromSignalSimple(signal, timestamps, sensitivity) {
-if (!signal || signal.length < 50) return null;
-const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-const detr = signal.map(v => v - mean);
+// Rough HR estimation from brightness signal (not clinical!)
+function computeHrFromSignal(brightness, timestamps, sensitivityMode) {
+if (!brightness || brightness.length < 30) return null;
 
-// basic smoothing
+// detrend
+const mean = brightness.reduce((a, b) => a + b, 0) / brightness.length;
+const detr = brightness.map(v => v - mean);
+
+// simple smoothing
 const smoothed = [];
 const w = 3;
 for (let i = 0; i < detr.length; i++) {
@@ -365,9 +364,8 @@ smoothed.push(s / c);
 const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
 if (maxAmp === 0) return null;
 
-let baseThr = 0.5;
-if (sensitivity === "high") baseThr = 0.3;
-const thr = maxAmp * baseThr;
+let thr = maxAmp * 0.6;
+if (sensitivityMode === "high") thr = maxAmp * 0.4;
 
 const peakTimes = [];
 for (let i = 1; i < smoothed.length - 1; i++) {
@@ -398,26 +396,31 @@ if (bpm < 40 || bpm > 180) return null;
 return bpm;
 }
 
-// Liveness score based on brightness variability
-function computeLivenessScoreSimple(quality) {
-let score;
-if (quality > 8) score = 90;
-else if (quality > 4) score = 70;
-else if (quality > 2) score = 55;
-else score = 30;
+function computeLivenessScore(quality, hasHr) {
+let score = 0;
+
+if (quality > 8) score += 50;
+else if (quality > 4) score += 35;
+else if (quality > 2) score += 20;
+else score += 10;
+
+if (hasHr) score += 30; // HR found → stronger sign of live human
+
+if (score > 100) score = 100;
 
 let labelClass = "";
 let conclusion;
 if (score >= 75) {
 labelClass = "liveness-pass";
-conclusion = "Liveness PASS – strong variation consistent with live video.";
+conclusion = "Liveness PASS – optical variation and HR estimate consistent with live video.";
 } else if (score >= 50) {
 labelClass = "liveness-borderline";
-conclusion = "Liveness BORDERLINE – limited variation; repeat or verify with additional methods.";
+conclusion = "Liveness BORDERLINE – limited variation; repeat or use additional verification.";
 } else {
 labelClass = "liveness-suspicious";
-conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static or spoofed content.";
+conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static, replay or synthetic content.";
 }
+
 return { score, labelClass, conclusion };
 }
 
@@ -426,98 +429,100 @@ if (!video || !video.srcObject) {
 statusEl.textContent = "Status: Start the camera before running a liveness check.";
 return;
 }
-if (collecting) {
+if (isRunning) {
 statusEl.textContent = "Status: A measurement is already running. Please wait.";
 return;
 }
 
-collecting = true;
-let remaining = 10; // seconds
+isRunning = true;
 runLivenessBtn.disabled = true;
 
-statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
+const ctx = canvas.getContext("2d");
+const durationMs = 10000;
+const sampleInterval = 100; // 10 Hz
+const brightnessSeries = [];
+const timestamps = [];
+
+let elapsed = 0;
+let remaining = durationMs / 1000;
+
+statusEl.textContent = `Status: Liveness check running… (~${remaining}s).`;
 
 if (countdownTimer) clearInterval(countdownTimer);
 countdownTimer = setInterval(() => {
 remaining -= 1;
-if (remaining > 0 && collecting) {
-statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s left).`;
+if (remaining > 0 && isRunning) {
+statusEl.textContent = `Status: Liveness check running… (~${remaining}s left).`;
 }
 }, 1000);
 
-const ctx = canvas.getContext("2d");
-const durationMs = 10000;
-const startTime = performance.now();
-
-const brightnessSeries = [];
-const timestamps = [];
-
-function collect(now) {
-if (!collecting) return;
-
-const elapsed = now - startTime;
-if (elapsed >= durationMs) {
-collecting = false;
-if (animId) {
-cancelAnimationFrame(animId);
-animId = null;
-}
-if (countdownTimer) {
-clearInterval(countdownTimer);
-countdownTimer = null;
-}
-runLivenessBtn.disabled = false;
-processLivenessSimple(brightnessSeries, timestamps);
-return;
-}
+if (sampleTimer) clearInterval(sampleTimer);
+sampleTimer = setInterval(() => {
+if (!isRunning) return;
+elapsed += sampleInterval;
 
 const w = canvas.width;
 const h = canvas.height;
-ctx.drawImage(video, 0, 0, w, h);
 
+if (video.videoWidth === 0 || video.videoHeight === 0) {
+// Camera not ready yet; skip this frame
+if (elapsed >= durationMs) finishLiveness(brightnessSeries, timestamps);
+return;
+}
+
+ctx.drawImage(video, 0, 0, w, h);
 const frame = ctx.getImageData(0, 0, w, h);
 const d = frame.data;
 let sum = 0, c = 0;
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], g = d[i+1], b = d[i+2];
-const lum = 0.299*r + 0.587*g + 0.114*b;
-sum += lum;
-c++;
+const lum = 0.299*r + 0.587*g + 0.114*b; // approximate luminance
+sum += lum; c++;
 }
 const avgLum = c ? sum / c : 0;
 brightnessSeries.push(avgLum);
-timestamps.push(now);
+timestamps.push(performance.now());
 
-animId = requestAnimationFrame(collect);
+if (elapsed >= durationMs) {
+finishLiveness(brightnessSeries, timestamps);
+}
+}, sampleInterval);
 }
 
-animId = requestAnimationFrame(collect);
+function finishLiveness(brightnessSeries, timestamps) {
+if (sampleTimer) {
+clearInterval(sampleTimer);
+sampleTimer = null;
 }
+if (countdownTimer) {
+clearInterval(countdownTimer);
+countdownTimer = null;
+}
+isRunning = false;
+runLivenessBtn.disabled = false;
 
-function processLivenessSimple(brightnessSeries, timestamps) {
 const sensitivity = sensitivitySelect.value || "normal";
-
-let quality = computeSignalQualitySimple(brightnessSeries);
+let quality = computeStd(brightnessSeries);
 if (sensitivity === "high") {
 quality *= 1.5;
 }
 
-// HR estimate (simple demo)
-const hr = computeHrFromSignalSimple(brightnessSeries, timestamps, sensitivity);
+const bpm = computeHrFromSignal(brightnessSeries, timestamps, sensitivity);
+const hasHr = bpm !== null;
 
-const { score, labelClass, conclusion } = computeLivenessScoreSimple(quality);
+const { score, labelClass, conclusion } = computeLivenessScore(quality, hasHr);
 
 livenessScoreValue.textContent = score.toFixed(0);
 livenessScoreValue.className = "meta liveness-value " + labelClass;
 
-if (hr) {
-livenessHrValue.textContent = `${hr.toFixed(0)} bpm`;
+if (hasHr) {
+livenessHrValue.textContent = `${bpm.toFixed(0)} bpm`;
 } else {
 livenessHrValue.textContent = "–";
 }
 
 signalQualityValue.textContent = quality.toFixed(2);
-roiCorrelationValue.textContent = `std(b)=${quality.toFixed(2)}`;
+roiCorrelationValue.textContent = quality.toFixed(2); // just showing std(b) again
 
 livenessConclusion.textContent = conclusion;
 statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
@@ -630,7 +635,8 @@ document.getElementById("clearBtn").addEventListener("click", clearEntries);
 
 startCameraBtn.addEventListener("click", startCamera);
 stopCameraBtn.addEventListener("click", stopCamera);
-runLivenessBtn.addEventListener("click", runLiveness);
+runLivenessBtn.addEventListener("click", runLivenessCheck);
+
 setVideoZoom();
 refreshSaveInfo();
 
