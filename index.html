@@ -185,7 +185,7 @@
         </div>
         <div>
           <label for="licenseCountry">Licence Country</label>
-          <input type="text" id="licenseCountry" placeholder="e.g. DE, AE, LY" />
+          <input type="text" id="licenseCountry" placeholder="e.g. DE, US," />
         </div>
         <div>
           <label for="licenseExpiry">Licence Expiry</label>
@@ -282,6 +282,7 @@
 
     let stream = null;
     let animId = null;
+    let countdownTimer = null;
     let collecting = false;
 
     const STORAGE_KEY = "hcpAntiDeepfakeEntries_v1";
@@ -315,6 +316,10 @@
         cancelAnimationFrame(animId);
         animId = null;
       }
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
       if (stream) {
         stream.getTracks().forEach(t => t.stop());
         stream = null;
@@ -322,6 +327,7 @@
       video.srcObject = null;
       collecting = false;
       statusEl.textContent = "Status: Camera stopped.";
+      runLivenessBtn.disabled = false;
     }
 
     function correlation(a, b) {
@@ -463,7 +469,18 @@
       }
 
       collecting = true;
-      statusEl.textContent = "Status: Liveness check running… remain still for ~30 seconds.";
+      let remaining = 30;
+      runLivenessBtn.disabled = true;
+
+      statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
+
+      if (countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        remaining -= 1;
+        if (remaining > 0 && collecting) {
+          statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s left).`;
+        }
+      }, 1000);
 
       const ctx = canvas.getContext("2d");
       const durationMs = 30000;
@@ -484,6 +501,11 @@
             cancelAnimationFrame(animId);
             animId = null;
           }
+          if (countdownTimer) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+          }
+          runLivenessBtn.disabled = false;
           processLivenessSignals(forehead, cheekL, cheekR, timestamps);
           return;
         }
@@ -677,4 +699,5 @@
   </script>
 </body>
 </html>
+
 
