@@ -158,7 +158,7 @@
   <div class="app">
     <h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
     <p class="meta">
-      This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological signal analysis (remote PPG). It does not replace official identity, licence or clinical verification processes.
+      This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on physiological-style signal analysis. It does not replace official identity, licence or clinical verification processes.
     </p>
 
     <!-- HCP DATA -->
@@ -185,7 +185,7 @@
         </div>
         <div>
           <label for="licenseCountry">Licence Country</label>
-          <input type="text" id="licenseCountry" placeholder="e.g. DE, US," />
+          <input type="text" id="licenseCountry" placeholder="e.g. DE, AE, LY" />
         </div>
         <div>
           <label for="licenseExpiry">Licence Expiry</label>
@@ -206,7 +206,7 @@
       <div class="controls-row">
         <button type="button" class="btn-secondary" id="startCameraBtn">Start Camera</button>
         <button type="button" class="btn-secondary" id="stopCameraBtn">Stop Camera</button>
-        <button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~30s)</button>
+        <button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~10s)</button>
       </div>
 
       <div class="controls-row">
@@ -241,7 +241,7 @@
           <span id="signalQualityValue">–</span>
         </div>
         <div class="result-item">
-          <span>ROI correlation:</span>
+          <span>Frame variance:</span>
           <span id="roiCorrelationValue">–</span>
         </div>
       </div>
@@ -285,7 +285,7 @@
     let countdownTimer = null;
     let collecting = false;
 
-    const STORAGE_KEY = "hcpAntiDeepfakeEntries_v1";
+    const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v1";
 
     function setVideoZoom() {
       const zoom = parseFloat(zoomRange.value);
@@ -307,7 +307,7 @@
         statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
       } catch (err) {
         console.error(err);
-        statusEl.textContent = "Status: Unable to access camera. Check permissions.";
+        statusEl.textContent = "Status: Unable to access camera. Check permissions or run over HTTPS.";
       }
     }
 
@@ -330,131 +330,36 @@
       runLivenessBtn.disabled = false;
     }
 
-    function correlation(a, b) {
-      const n = Math.min(a.length, b.length);
-      if (n < 10) return 0;
-      let sumA = 0, sumB = 0;
-      for (let i = 0; i < n; i++) {
-        sumA += a[i];
-        sumB += b[i];
-      }
-      const meanA = sumA / n;
-      const meanB = sumB / n;
-      let num = 0, denA = 0, denB = 0;
-      for (let i = 0; i < n; i++) {
-        const da = a[i] - meanA;
-        const db = b[i] - meanB;
-        num += da * db;
-        denA += da * da;
-        denB += db * db;
-      }
-      const denom = Math.sqrt(denA * denB);
-      if (!denom) return 0;
-      return num / denom;
-    }
-
-    function computeSignalQuality(signal) {
-      if (!signal || signal.length < 30) return 0;
+    function computeSignalQualitySimple(signal) {
+      if (!signal || signal.length < 10) return 0;
       const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
       const detr = signal.map(v => v - mean);
-      let min = Infinity, max = -Infinity, sumSq = 0;
-      for (const v of detr) {
-        if (v < min) min = v;
-        if (v > max) max = v;
-        sumSq += v * v;
-      }
-      const amp = max - min;
-      const std = Math.sqrt(sumSq / detr.length) || 1e-6;
-      return amp / std;
+      let sumSq = 0;
+      for (const v of detr) sumSq += v * v;
+      const std = Math.sqrt(sumSq / detr.length) || 0;
+      return std; // simple variance-based measure
     }
 
-    function computeHrFromSignal(signal, timestamps, sensitivityMode) {
-      if (!signal || signal.length < 50) return null;
-      const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
-      const detr = signal.map(v => v - mean);
-
-      const smoothed = [];
-      const w = 5;
-      for (let i = 0; i < detr.length; i++) {
-        let s = 0, c = 0;
-        for (let j = -w; j <= w; j++) {
-          const idx = i + j;
-          if (idx >= 0 && idx < detr.length) {
-            s += detr[idx];
-            c++;
-          }
-        }
-        smoothed.push(s / c);
-      }
-
-      const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
-      if (maxAmp === 0) return null;
-
-      const baseThr = 0.6;
-      const thrMultiplier = sensitivityMode === "high" ? 0.4 / baseThr : 1;
-      const thr = maxAmp * baseThr * thrMultiplier;
-
-      const peakTimes = [];
-      for (let i = 1; i < smoothed.length - 1; i++) {
-        const prev = smoothed[i - 1];
-        const curr = smoothed[i];
-        const next = smoothed[i + 1];
-        if (curr > prev && curr > next && curr > thr) {
-          peakTimes.push(timestamps[i]);
-        }
-      }
-
-      if (peakTimes.length < 3) return null;
-      const intervals = [];
-      for (let i = 1; i < peakTimes.length; i++) {
-        intervals.push(peakTimes[i] - peakTimes[i - 1]);
-      }
-      intervals.sort((a, b) => a - b);
-      const mid = Math.floor(intervals.length / 2);
-      const medianMs =
-        intervals.length % 2 === 0
-          ? (intervals[mid - 1] + intervals[mid]) / 2
-          : intervals[mid];
-
-      if (!medianMs || medianMs <= 0) return null;
-      const bpm = 60000 / medianMs;
-      if (bpm < 40 || bpm > 180) return null;
-      return bpm;
-    }
-
-    function computeLivenessScore({ bpm, quality, avgCorr }) {
-      let score = 0;
-      if (bpm) {
-        if (bpm >= 50 && bpm <= 130) score += 40;
-        else if (bpm >= 40 && bpm <= 160) score += 20;
-      }
-      if (quality > 6) score += 30;
-      else if (quality > 3) score += 20;
-      else if (quality > 1.5) score += 10;
-
-      if (avgCorr > 0.7) score += 20;
-      else if (avgCorr > 0.4) score += 10;
-
-      if (bpm) score += 10;
-      if (score > 100) score = 100;
-
-      if (!bpm || quality <= 1 || avgCorr <= 0.2) {
-        score = Math.min(score, 40);
-      }
+    function computeLivenessScoreSimple(quality) {
+      // quality ~= brightness variability
+      let score;
+      if (quality > 8) score = 90;        // strong variability → likely live
+      else if (quality > 4) score = 70;   // medium
+      else if (quality > 2) score = 55;   // borderline
+      else score = 30;                    // almost no variation → suspicious
 
       let labelClass = "";
       let conclusion;
       if (score >= 75) {
         labelClass = "liveness-pass";
-        conclusion = "Liveness PASS – strong signs of a live human video stream with coherent physiological pattern.";
+        conclusion = "Liveness PASS – strong variation consistent with live video.";
       } else if (score >= 50) {
         labelClass = "liveness-borderline";
-        conclusion = "Liveness BORDERLINE – mixed signal quality; repeat under better lighting or verify through additional methods.";
+        conclusion = "Liveness BORDERLINE – limited variation; repeat or verify with additional methods.";
       } else {
         labelClass = "liveness-suspicious";
-        conclusion = "Liveness SUSPICIOUS – weak/inconsistent physiological signal; treat as high fraud risk and use strong identity verification.";
+        conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static or spoofed content.";
       }
-
       return { score, labelClass, conclusion };
     }
 
@@ -469,7 +374,7 @@
       }
 
       collecting = true;
-      let remaining = 30;
+      let remaining = 10; // seconds
       runLivenessBtn.disabled = true;
 
       statusEl.textContent = `Status: Liveness check running… remain still (~${remaining}s).`;
@@ -483,12 +388,10 @@
       }, 1000);
 
       const ctx = canvas.getContext("2d");
-      const durationMs = 30000;
+      const durationMs = 10000;
       const startTime = performance.now();
 
-      const forehead = [];
-      const cheekL = [];
-      const cheekR = [];
+      const brightnessSeries = [];
       const timestamps = [];
 
       function collect(now) {
@@ -506,7 +409,7 @@
             countdownTimer = null;
           }
           runLivenessBtn.disabled = false;
-          processLivenessSignals(forehead, cheekL, cheekR, timestamps);
+          processLivenessSimple(brightnessSeries, timestamps);
           return;
         }
 
@@ -514,31 +417,18 @@
         const h = canvas.height;
         ctx.drawImage(video, 0, 0, w, h);
 
-        const fw = Math.floor(w * 0.4);
-        const fh = Math.floor(h * 0.22);
-        const fx = Math.floor((w - fw) / 2);
-        const fy = Math.floor(h * 0.12);
-
-        const cw = Math.floor(w * 0.3);
-        const ch = Math.floor(h * 0.28);
-        const ly = Math.floor(h * 0.35);
-        const lx = Math.floor(w * 0.15);
-        const rx = Math.floor(w - cw - w * 0.15);
-
-        function avgGreen(x, y, ww, hh) {
-          const frame = ctx.getImageData(x, y, ww, hh);
-          const d = frame.data;
-          let sum = 0, c = 0;
-          for (let i = 0; i < d.length; i += 4) {
-            sum += d[i + 1];
-            c++;
-          }
-          return c ? sum / c : 0;
+        const frame = ctx.getImageData(0, 0, w, h);
+        const d = frame.data;
+        let sum = 0, c = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          // luminance approximation
+          const r = d[i], g = d[i+1], b = d[i+2];
+          const lum = 0.299*r + 0.587*g + 0.114*b;
+          sum += lum;
+          c++;
         }
-
-        forehead.push(avgGreen(fx, fy, fw, fh));
-        cheekL.push(avgGreen(lx, ly, cw, ch));
-        cheekR.push(avgGreen(rx, ly, cw, ch));
+        const avgLum = c ? sum / c : 0;
+        brightnessSeries.push(avgLum);
         timestamps.push(now);
 
         animId = requestAnimationFrame(collect);
@@ -547,38 +437,27 @@
       animId = requestAnimationFrame(collect);
     }
 
-    function processLivenessSignals(forehead, cheekL, cheekR, timestamps) {
-      const sensitivityMode = sensitivitySelect.value || "normal";
+    function processLivenessSimple(brightnessSeries, timestamps) {
+      const sensitivity = sensitivitySelect.value || "normal";
 
-      const bpm = computeHrFromSignal(forehead, timestamps, sensitivityMode);
-      const quality = computeSignalQuality(forehead);
-      const corrFL = correlation(forehead, cheekL);
-      const corrFR = correlation(forehead, cheekR);
-      const corrLR = correlation(cheekL, cheekR);
-      const avgCorr = (corrFL + corrFR + corrLR) / 3;
-
-      let qualityText;
-      if (quality > 6) qualityText = `high (${quality.toFixed(2)})`;
-      else if (quality > 3) qualityText = `medium (${quality.toFixed(2)})`;
-      else qualityText = `low (${quality.toFixed(2)})`;
-
-      const corrText = `FL=${corrFL.toFixed(2)}, FR=${corrFR.toFixed(2)}, LR=${corrLR.toFixed(2)} (avg=${avgCorr.toFixed(2)})`;
-
-      const { score, labelClass, conclusion } = computeLivenessScore({ bpm, quality, avgCorr });
-
-      livenessScoreValue.textContent = isNaN(score) ? "–" : score.toFixed(0);
-      livenessScoreValue.className = "meta liveness-value " + labelClass;
-
-      if (bpm) {
-        livenessHrValue.textContent = `${bpm.toFixed(0)} bpm`;
-      } else {
-        livenessHrValue.textContent = "–";
+      // Adjust quality by sensitivity (roughly)
+      let quality = computeSignalQualitySimple(brightnessSeries);
+      if (sensitivity === "high") {
+        quality *= 1.5;
       }
 
-      signalQualityValue.textContent = qualityText;
-      roiCorrelationValue.textContent = corrText;
-      livenessConclusion.textContent = conclusion;
+      const { score, labelClass, conclusion } = computeLivenessScoreSimple(quality);
 
+      livenessScoreValue.textContent = score.toFixed(0);
+      livenessScoreValue.className = "meta liveness-value " + labelClass;
+
+      // HR not computed in this simple version
+      livenessHrValue.textContent = "–";
+
+      signalQualityValue.textContent = quality.toFixed(2);
+      roiCorrelationValue.textContent = `std(b)=${quality.toFixed(2)}`;
+
+      livenessConclusion.textContent = conclusion;
       statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
     }
 
@@ -699,5 +578,4 @@
   </script>
 </body>
 </html>
-
 
