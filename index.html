@@ -1,648 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>HCP Anti-Deepfake Liveness & Licence Check</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<style>
-:root {
-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-line-height: 1.4;
-color: #111827;
-}
-body {
-margin: 0;
-padding: 1.5rem;
-background: #f3f4f6;
-}
-.app {
-max-width: 900px;
-margin: 0 auto;
-background: #ffffff;
-padding: 1.25rem;
-border-radius: 12px;
-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-}
-h1 {
-margin: 0 0 0.5rem 0;
-font-size: 1.4rem;
-}
-.meta {
-font-size: 0.85rem;
-color: #6b7280;
-margin-bottom: 1rem;
-}
-.section-title {
-font-weight: 600;
-margin: 1rem 0 0.5rem 0;
-font-size: 1rem;
-}
-.grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-gap: 0.5rem 1rem;
-}
-label {
-font-size: 0.9rem;
-font-weight: 500;
-display: block;
-margin-bottom: 0.15rem;
-}
-input, select {
-width: 100%;
-box-sizing: border-box;
-padding: 0.4rem 0.5rem;
-border-radius: 6px;
-border: 1px solid #d1d5db;
-font: inherit;
-background: #f9fafb;
-}
-.card {
-margin-top: 0.75rem;
-padding: 0.75rem;
-border-radius: 10px;
-border: 1px solid #e5e7eb;
-background: #f9fafb;
-}
-.video-wrapper {
-width: 100%;
-max-width: 360px;
-height: 240px;
-margin: 0 auto;
-border-radius: 10px;
-overflow: hidden;
-border: 1px solid #e5e7eb;
-background: #000;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-video {
-transform-origin: center center;
-}
-.controls-row {
-display: flex;
-flex-wrap: wrap;
-gap: 0.5rem;
-margin-top: 0.5rem;
-}
-button {
-border: none;
-border-radius: 999px;
-padding: 0.45rem 0.9rem;
-font: inherit;
-cursor: pointer;
-font-size: 0.9rem;
-display: inline-flex;
-align-items: center;
-gap: 0.25rem;
-}
-.btn-primary {
-background: #2563eb;
-color: #ffffff;
-}
-.btn-secondary {
-background: #e5e7eb;
-color: #111827;
-}
-.btn-danger {
-background: #dc2626;
-color: #ffffff;
-}
-.small-label {
-font-size: 0.8rem;
-color: #6b7280;
-margin-top: 0.25rem;
-}
-.result-row {
-display: flex;
-flex-wrap: wrap;
-gap: 1rem;
-font-size: 0.9rem;
-}
-.result-item span:first-child {
-font-weight: 600;
-}
-.liveness-pass {
-color: #16a34a;
-font-weight: 600;
-}
-.liveness-borderline {
-color: #d97706;
-font-weight: 600;
-}
-.liveness-suspicious {
-color: #dc2626;
-font-weight: 600;
-}
-footer {
-margin-top: 1rem;
-font-size: 0.75rem;
-color: #6b7280;
-text-align: center;
-}
-@media (max-width: 640px) {
-body {
-padding: 0.75rem;
-}
-.app {
-padding: 0.75rem;
-}
-.video-wrapper {
-max-width: 100%;
-}
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Encounter Liveness & Anti-Deepfake Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Inline CSS -->
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0b1020;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      background: #12172a;
+      border-bottom: 1px solid #262c4a;
+    }
+
+    .app-header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .app-header p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .app-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .camera-card,
+    .info-card {
+      background: #151a30;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      border: 1px solid #262c4a;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .video-container {
+      position: relative;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      background:#000;
+      max-width:480px;
+      margin:auto;
+    }
+
+    video {
+      width:100%;
+      display:block;
+      transform: scale(1.02);
+    }
+
+    .overlay {
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .overlay span {
+      background:rgba(0,0,0,0.6);
+      padding:0.6rem 1rem;
+      border-radius:999px;
+      border:1px solid #fff;
+      font-size:0.9rem;
+      text-align:center;
+    }
+
+    .hidden {
+      display:none !important;
+    }
+
+    .controls {
+      margin-top:1rem;
+      display:flex;
+      gap:0.75rem;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    button {
+      border:none;
+      border-radius:999px;
+      padding:0.5rem 1rem;
+      color:white;
+      background:#246bfd;
+      cursor:pointer;
+      font-size:0.9rem;
+      transition:0.1s ease all;
+    }
+
+    button:disabled {
+      opacity:0.5;
+      cursor:default;
+    }
+
+    button:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow:0 4px 10px rgba(36,107,253,0.6);
+      background:#2a7bff;
+    }
+
+    .status {
+      margin-top:1rem;
+      border-top:1px solid #262c4a;
+      padding-top:0.75rem;
+      font-size:0.9rem;
+    }
+
+    .status-row {
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:0.4rem;
+    }
+
+    progress {
+      width:100%;
+      height:0.6rem;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    progress::-webkit-progress-bar {
+      background:#20263d;
+    }
+    progress::-webkit-progress-value {
+      background:#24d18f;
+    }
+    progress::-moz-progress-bar {
+      background:#24d18f;
+    }
+
+    .disclaimer {
+      margin-top:0.8rem;
+      font-size:0.8rem;
+      opacity:0.8;
+    }
+
+    .info-card h2 {
+      font-size:1.2rem;
+      margin-bottom:0.4rem;
+    }
+
+    .info-card p {
+      font-size:0.9rem;
+      opacity:0.9;
+    }
+
+    /* Governance collapsible */
+
+    .governance-card {
+      padding:0;
+      overflow:hidden;
+    }
+
+    .collapsible-header {
+      width:100%;
+      background:#151a30;
+      border-bottom:1px solid #262c4a;
+      padding:0.9rem 1rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-radius:1rem 1rem 0 0;
+      cursor:pointer;
+    }
+
+    .collapsible-header span:first-child {
+      flex:1;
+      padding-right:0.5rem;
+      font-size:0.95rem;
+      text-align:left;
+    }
+
+    .chevron {
+      font-size:0.9rem;
+      transition:0.2s;
+    }
+
+    .chevron.rotated {
+      transform:rotate(-90deg);
+    }
+
+    .collapsible-body {
+      padding:1rem 1.1rem 1.1rem;
+      font-size:0.9rem;
+    }
+
+    .collapsible-body.collapsed {
+      display:none;
+    }
+
+    .collapsible-body h3 {
+      margin-top:0.5rem;
+      margin-bottom:0.3rem;
+      font-size:1rem;
+    }
+
+    .collapsible-body p,
+    .collapsible-body li {
+      font-size:0.9rem;
+    }
+
+    .collapsible-body ul,
+    .collapsible-body ol {
+      margin-left:1.1rem;
+      margin-bottom:0.3rem;
+    }
+
+    .governance-footnote {
+      margin-top:0.7rem;
+      font-size:0.85rem;
+      opacity:0.75;
+    }
+
+    /* Modal */
+
+    .modal {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:100;
+    }
+
+    .modal-content {
+      background:#151a30;
+      padding:1.5rem;
+      border-radius:1rem;
+      max-width:600px;
+      max-height:80vh;
+      overflow-y:auto;
+      border:1px solid #262c4a;
+      position:relative;
+    }
+
+    .modal-content h2 {
+      margin-bottom:0.4rem;
+    }
+
+    .modal-content h3 {
+      margin-top:0.8rem;
+      margin-bottom:0.25rem;
+      font-size:1rem;
+    }
+
+    .modal-content p,
+    .modal-content li {
+      font-size:0.9rem;
+    }
+
+    .modal-content ul,
+    .modal-content ol {
+      margin-left:1.1rem;
+      margin-bottom:0.3rem;
+    }
+
+    .close-btn {
+      position:absolute;
+      top:1rem;
+      right:1rem;
+      background:#262c4a;
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      border:none;
+      color:#f5f5f5;
+      cursor:pointer;
+      font-size:1rem;
+      line-height:28px;
+      text-align:center;
+    }
+
+    /* Layout for wider screens */
+
+    @media (min-width: 900px) {
+      .app-main {
+        flex-direction:row;
+        align-items:flex-start;
+      }
+
+      .camera-card,
+      .info-card {
+        flex:1;
+      }
+    }
+
+    /* Print mode for PDF export */
+
+    @media print {
+      body { background:#ffffff; color:#000000; }
+      .app-header,
+      .camera-card,
+      .info-card {
+        background:#ffffff;
+        color:#000000;
+        border:1px solid #cccccc;
+        box-shadow:none;
+      }
+      .modal {
+        display:none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-<h1>HCP Anti-Deepfake Liveness & Licence Check</h1>
-<p class="meta">
-This application combines healthcare professional licence details with a camera-based anti-deepfake liveness check based on optical signal variation. It does not replace official identity, licence or clinical verification processes.
-</p>
-
-<!-- HCP DATA -->
-<div>
-<div class="section-title">1. Healthcare Professional</div>
-<div class="grid">
-<div>
-<label for="hcpName">Name *</label>
-<input type="text" id="hcpName" placeholder="Full name" required />
-</div>
-<div>
-<label for="hcpRole">Profession / Role *</label>
-<input type="text" id="hcpRole" placeholder="e.g. Physiotherapist, MD, Nurse" required />
-</div>
-<div>
-<label for="licenseNumber">Licence Number *</label>
-<input type="text" id="licenseNumber" placeholder="Licence / Registration ID" required />
-</div>
-</div>
-<div class="grid" style="margin-top:0.5rem;">
-<div>
-<label for="licenseAuthority">Issuing Authority</label>
-<input type="text" id="licenseAuthority" placeholder="e.g. State Medical Board" />
-</div>
-<div>
-<label for="licenseCountry">Licence Country</label>
-<input type="text" id="licenseCountry" placeholder="e.g. DE, AE, LY" />
-</div>
-<div>
-<label for="licenseExpiry">Licence Expiry</label>
-<input type="date" id="licenseExpiry" />
-</div>
-</div>
-</div>
-
-<!-- CAMERA + LIVENESS -->
-<div class="card">
-<div class="section-title">2. Camera Liveness Check</div>
-
-<div class="video-wrapper">
-<video id="video" autoplay muted playsinline></video>
-<canvas id="canvas" width="160" height="120" style="display:none;"></canvas>
-</div>
-
-<div class="controls-row">
-<button type="button" class="btn-secondary" id="startCameraBtn">Start Camera</button>
-<button type="button" class="btn-secondary" id="stopCameraBtn">Stop Camera</button>
-<button type="button" class="btn-primary" id="runLivenessBtn">Run Liveness Check (~10s)</button>
-</div>
-
-<div class="controls-row">
-<div>
-<label class="small-label" for="zoomRange">Zoom</label>
-<input type="range" id="zoomRange" min="1" max="2" step="0.1" value="1" />
-</div>
-<div>
-<label class="small-label" for="sensitivitySelect">Light / Sensitivity</label>
-<select id="sensitivitySelect">
-<option value="normal">Normal</option>
-<option value="high">Low-light / High sensitivity</option>
-</select>
-</div>
-</div>
-
-<p id="status" class="meta" style="margin-top:0.5rem;">
-Status: Camera not started.
-</p>
-
-<div class="result-row">
-<div class="result-item">
-<span>Liveness score:</span>
-<span id="livenessScoreValue">–</span>
-</div>
-<div class="result-item">
-<span>HR:</span>
-<span id="livenessHrValue">–</span>
-</div>
-<div class="result-item">
-<span>Signal quality:</span>
-<span id="signalQualityValue">–</span>
-</div>
-<div class="result-item">
-<span>Brightness std:</span>
-<span id="roiCorrelationValue">–</span>
-</div>
-</div>
-<p id="livenessConclusion" class="meta" style="margin-top:0.5rem;"></p>
-</div>
-
-<!-- SAVE -->
-<div class="card">
-<div class="section-title">3. Save Verification (Local)</div>
-<button type="button" class="btn-primary" id="saveBtn">Save Entry Locally</button>
-<button type="button" class="btn-secondary" id="exportBtn">Export CSV</button>
-<button type="button" class="btn-danger" id="clearBtn">Delete All Local Entries</button>
-<p id="saveInfo" class="meta" style="margin-top:0.4rem;">No entries saved yet.</p>
-</div>
-
-<footer>
-Disclaimer: Anti-deepfake liveness indicators are auxiliary and do not replace official identity, licence or clinical verification processes.
-Developer: Mr. Moustafa Mohammed Elsayed Elsayed Ali – Contact: mostischmidbauer@web.de · +49 1522 5231568.
-</footer>
-</div>
-
-<script>
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const startCameraBtn = document.getElementById("startCameraBtn");
-const stopCameraBtn = document.getElementById("stopCameraBtn");
-const runLivenessBtn = document.getElementById("runLivenessBtn");
-const zoomRange = document.getElementById("zoomRange");
-const sensitivitySelect = document.getElementById("sensitivitySelect");
-const statusEl = document.getElementById("status");
-
-const livenessScoreValue = document.getElementById("livenessScoreValue");
-const livenessHrValue = document.getElementById("livenessHrValue");
-const signalQualityValue = document.getElementById("signalQualityValue");
-const roiCorrelationValue = document.getElementById("roiCorrelationValue");
-const livenessConclusion = document.getElementById("livenessConclusion");
-const saveInfo = document.getElementById("saveInfo");
-
-let stream = null;
-let sampleTimer = null;
-let countdownTimer = null;
-let isRunning = false;
-
-const STORAGE_KEY = "hcpAntiDeepfakeEntries_simple_v2";
-
-function setVideoZoom() {
-const zoom = parseFloat(zoomRange.value);
-video.style.transform = `scale(${zoom})`;
-}
-zoomRange.addEventListener("input", setVideoZoom);
-
-async function startCamera() {
-if (stream) {
-statusEl.textContent = "Status: Camera already running.";
-return;
-}
-try {
-stream = await navigator.mediaDevices.getUserMedia({
-video: { width: 640, height: 480, facingMode: "user" },
-audio: false
-});
-video.srcObject = stream;
-statusEl.textContent = "Status: Camera started. Center your face with good lighting.";
-} catch (err) {
-console.error(err);
-statusEl.textContent = "Status: Unable to access camera. Use HTTPS and allow camera permissions.";
-}
-}
-
-function stopCamera() {
-if (sampleTimer) {
-clearInterval(sampleTimer);
-sampleTimer = null;
-}
-if (countdownTimer) {
-clearInterval(countdownTimer);
-countdownTimer = null;
-}
-if (stream) {
-stream.getTracks().forEach(t => t.stop());
-stream = null;
-}
-video.srcObject = null;
-isRunning = false;
-runLivenessBtn.disabled = false;
-statusEl.textContent = "Status: Camera stopped.";
-}
-
-function computeStd(values) {
-if (!values || values.length < 2) return 0;
-const mean = values.reduce((a, b) => a + b, 0) / values.length;
-let sumSq = 0;
-for (const v of values) sumSq += (v - mean) * (v - mean);
-return Math.sqrt(sumSq / values.length);
-}
-
-// Rough HR estimation from brightness signal (not clinical!)
-function computeHrFromSignal(brightness, timestamps, sensitivityMode) {
-if (!brightness || brightness.length < 30) return null;
-
-// detrend
-const mean = brightness.reduce((a, b) => a + b, 0) / brightness.length;
-const detr = brightness.map(v => v - mean);
-
-// simple smoothing
-const smoothed = [];
-const w = 3;
-for (let i = 0; i < detr.length; i++) {
-let s = 0, c = 0;
-for (let j = -w; j <= w; j++) {
-const idx = i + j;
-if (idx >= 0 && idx < detr.length) {
-s += detr[idx];
-c++;
-}
-}
-smoothed.push(s / c);
-}
-
-const maxAmp = Math.max(...smoothed.map(v => Math.abs(v)));
-if (maxAmp === 0) return null;
-
-let thr = maxAmp * 0.6;
-if (sensitivityMode === "high") thr = maxAmp * 0.4;
-
-const peakTimes = [];
-for (let i = 1; i < smoothed.length - 1; i++) {
-const prev = smoothed[i - 1];
-const curr = smoothed[i];
-const next = smoothed[i + 1];
-if (curr > prev && curr > next && curr > thr) {
-peakTimes.push(timestamps[i]);
-}
-}
-
-if (peakTimes.length < 3) return null;
-
-const intervals = [];
-for (let i = 1; i < peakTimes.length; i++) {
-intervals.push(peakTimes[i] - peakTimes[i - 1]);
-}
-intervals.sort((a, b) => a - b);
-const mid = Math.floor(intervals.length / 2);
-const medianMs =
-intervals.length % 2 === 0
-? (intervals[mid - 1] + intervals[mid]) / 2
-: intervals[mid];
-
-if (!medianMs || medianMs <= 0) return null;
-const bpm = 60000 / medianMs;
-if (bpm < 40 || bpm > 180) return null;
-return bpm;
-}
-
-function computeLivenessScore(quality, hasHr) {
-let score = 0;
-
-if (quality > 8) score += 50;
-else if (quality > 4) score += 35;
-else if (quality > 2) score += 20;
-else score += 10;
-
-if (hasHr) score += 30; // HR found → stronger sign of live human
-
-if (score > 100) score = 100;
-
-let labelClass = "";
-let conclusion;
-if (score >= 75) {
-labelClass = "liveness-pass";
-conclusion = "Liveness PASS – optical variation and HR estimate consistent with live video.";
-} else if (score >= 50) {
-labelClass = "liveness-borderline";
-conclusion = "Liveness BORDERLINE – limited variation; repeat or use additional verification.";
-} else {
-labelClass = "liveness-suspicious";
-conclusion = "Liveness SUSPICIOUS – very low variation; high risk of static, replay or synthetic content.";
-}
-
-return { score, labelClass, conclusion };
-}
-
-function runLivenessCheck() {
-if (!video || !video.srcObject) {
-statusEl.textContent = "Status: Start the camera before running a liveness check.";
-return;
-}
-if (isRunning) {
-statusEl.textContent = "Status: A measurement is already running. Please wait.";
-return;
-}
-
-isRunning = true;
-runLivenessBtn.disabled = true;
-
-const ctx = canvas.getContext("2d");
-const durationMs = 10000;
-const sampleInterval = 100; // 10 Hz
-const brightnessSeries = [];
-const timestamps = [];
-
-let elapsed = 0;
-let remaining = durationMs / 1000;
-
-statusEl.textContent = `Status: Liveness check running… (~${remaining}s).`;
-
-if (countdownTimer) clearInterval(countdownTimer);
-countdownTimer = setInterval(() => {
-remaining -= 1;
-if (remaining > 0 && isRunning) {
-statusEl.textContent = `Status: Liveness check running… (~${remaining}s left).`;
-}
-}, 1000);
-
-if (sampleTimer) clearInterval(sampleTimer);
-sampleTimer = setInterval(() => {
-if (!isRunning) return;
-elapsed += sampleInterval;
-
-const w = canvas.width;
-const h = canvas.height;
-
-if (video.videoWidth === 0 || video.videoHeight === 0) {
-// Camera not ready yet; skip this frame
-if (elapsed >= durationMs) finishLiveness(brightnessSeries, timestamps);
-return;
-}
-
-ctx.drawImage(video, 0, 0, w, h);
-const frame = ctx.getImageData(0, 0, w, h);
-const d = frame.data;
-let sum = 0, c = 0;
-for (let i = 0; i < d.length; i += 4) {
-const r = d[i], g = d[i+1], b = d[i+2];
-const lum = 0.299*r + 0.587*g + 0.114*b; // approximate luminance
-sum += lum; c++;
-}
-const avgLum = c ? sum / c : 0;
-brightnessSeries.push(avgLum);
-timestamps.push(performance.now());
-
-if (elapsed >= durationMs) {
-finishLiveness(brightnessSeries, timestamps);
-}
-}, sampleInterval);
-}
-
-function finishLiveness(brightnessSeries, timestamps) {
-if (sampleTimer) {
-clearInterval(sampleTimer);
-sampleTimer = null;
-}
-if (countdownTimer) {
-clearInterval(countdownTimer);
-countdownTimer = null;
-}
-isRunning = false;
-runLivenessBtn.disabled = false;
-
-const sensitivity = sensitivitySelect.value || "normal";
-let quality = computeStd(brightnessSeries);
-if (sensitivity === "high") {
-quality *= 1.5;
-}
-
-const bpm = computeHrFromSignal(brightnessSeries, timestamps, sensitivity);
-const hasHr = bpm !== null;
-
-const { score, labelClass, conclusion } = computeLivenessScore(quality, hasHr);
-
-livenessScoreValue.textContent = score.toFixed(0);
-livenessScoreValue.className = "meta liveness-value " + labelClass;
-
-if (hasHr) {
-livenessHrValue.textContent = `${bpm.toFixed(0)} bpm`;
-} else {
-livenessHrValue.textContent = "–";
-}
-
-signalQualityValue.textContent = quality.toFixed(2);
-roiCorrelationValue.textContent = quality.toFixed(2); // just showing std(b) again
-
-livenessConclusion.textContent = conclusion;
-statusEl.textContent = "Status: Liveness check finished. You can repeat or save this entry.";
-}
-
-function loadEntries() {
-try {
-const raw = localStorage.getItem(STORAGE_KEY);
-if (!raw) return [];
-const parsed = JSON.parse(raw);
-return Array.isArray(parsed) ? parsed : [];
-} catch {
-return [];
-}
-}
-
-function saveEntries(list) {
-localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-}
-
-function refreshSaveInfo() {
-const entries = loadEntries();
-if (!entries.length) {
-saveInfo.textContent = "No entries saved yet.";
-} else {
-saveInfo.textContent = `${entries.length} entr(y/ies) stored locally in this browser.`;
-}
-}
-
-function saveEntry() {
-const hcpName = document.getElementById("hcpName").value.trim();
-const hcpRole = document.getElementById("hcpRole").value.trim();
-const licenseNumber = document.getElementById("licenseNumber").value.trim();
-const licenseAuthority = document.getElementById("licenseAuthority").value.trim();
-const licenseCountry = document.getElementById("licenseCountry").value.trim();
-const licenseExpiry = document.getElementById("licenseExpiry").value;
-const score = livenessScoreValue.textContent;
-const hr = livenessHrValue.textContent;
-const signalQ = signalQualityValue.textContent;
-const roiC = roiCorrelationValue.textContent;
-const timestamp = new Date().toISOString();
-
-if (!hcpName || !hcpRole || !licenseNumber) {
-alert("Please fill in name, profession and licence number before saving.");
-return;
-}
-
-const entry = {
-hcpName,
-hcpRole,
-licenseNumber,
-licenseAuthority,
-licenseCountry,
-licenseExpiry,
-livenessScore: score,
-hr,
-signalQuality: signalQ,
-roiCorrelation: roiC,
-timestamp
-};
-
-const entries = loadEntries();
-entries.push(entry);
-saveEntries(entries);
-refreshSaveInfo();
-alert("Entry saved locally on this device.");
-}
-
-function exportCsv() {
-const entries = loadEntries();
-if (!entries.length) {
-alert("No entries to export.");
-return;
-}
-const headers = [
-"timestamp","hcpName","hcpRole","licenseNumber",
-"licenseAuthority","licenseCountry","licenseExpiry",
-"livenessScore","hr","signalQuality","roiCorrelation"
-];
-const rows = [];
-rows.push(headers.join(","));
-entries.forEach(e => {
-const row = headers.map(h => {
-const val = e[h] || "";
-const escaped = String(val).replace(/"/g, '""');
-return `"${escaped}"`;
-}).join(",");
-rows.push(row);
-});
-const blob = new Blob([rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
-const url = URL.createObjectURL(blob);
-const a = document.createElement("a");
-a.href = url;
-a.download = "hcp-anti-deepfake-log.csv";
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-}
-
-function clearEntries() {
-if (!confirm("Delete all locally stored entries?")) return;
-localStorage.removeItem(STORAGE_KEY);
-refreshSaveInfo();
-}
-
-document.getElementById("saveBtn").addEventListener("click", saveEntry);
-document.getElementById("exportBtn").addEventListener("click", exportCsv);
-document.getElementById("clearBtn").addEventListener("click", clearEntries);
-
-startCameraBtn.addEventListener("click", startCamera);
-stopCameraBtn.addEventListener("click", stopCamera);
-runLivenessBtn.addEventListener("click", runLivenessCheck);
-
-setVideoZoom();
-refreshSaveInfo();
-
-window.addEventListener("beforeunload", () => {
-stopCamera();
-});
-</script>
+  <header class="app-header">
+    <h1>Encounter Liveness Check</h1>
+    <p>Simple live camera check as an anti-deepfake safety layer.</p>
+  </header>
+
+  <main class="app-main">
+    <!-- Camera / main card -->
+    <section class="camera-card">
+      <div class="video-container">
+        <video id="video" autoplay playsinline></video>
+        <div id="overlay" class="overlay hidden">
+          <span id="overlayText"></span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="startCameraBtn">Start camera</button>
+        <button id="stopCameraBtn" disabled>Stop camera</button>
+        <button id="runLivenessBtn" disabled>Run liveness check</button>
+        <button id="helpBtn">Help</button>
+      </div>
+
+      <div class="status">
+        <div class="status-row">
+          <span>Status:</span>
+          <span id="statusText">Idle</span>
+        </div>
+        <div class="progress-wrap">
+          <label for="progressBar">Liveness progress</label>
+          <progress id="progressBar" value="0" max="100"></progress>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <p>
+          This liveness & anti-deepfake layer is provided by
+          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (C&C Investments & Trade LLC).
+        </p>
+        <p>
+          Use only within your organization’s security and data-protection policies; no guarantee of
+          identity by itself.
+        </p>
+      </div>
+    </section>
+
+    <!-- Short description card -->
+    <section class="info-card">
+      <h2>What this app does</h2>
+      <p>
+        This app runs a short liveness sequence (head movement tasks) and shows a clear progress bar.
+        It is a minimal testbed for your anti-deepfake concept and can be extended with more advanced
+        checks or backend verification.
+      </p>
+    </section>
+
+    <!-- Governance Stakeholder Panel -->
+    <section class="info-card governance-card">
+      <button class="collapsible-header" id="governanceToggle">
+        <span>Payor / Regulator / Admin / Boards / Patient Advocates – Technical Notes</span>
+        <span class="chevron" id="governanceChevron">▼</span>
+      </button>
+
+      <div class="collapsible-body collapsed" id="governanceBody">
+
+        <h3>1. Purpose & Scope</h3>
+        <p>
+          This module provides a structured <strong>challenge–response liveness check</strong> for remote
+          encounters. It is designed to protect all external stakeholders:
+        </p>
+
+        <ul>
+          <li><strong>Payors</strong> (insurance, health funds)</li>
+          <li><strong>Regulators</strong> (health authorities, data-protection bodies)</li>
+          <li><strong>Administrators</strong> (hospitals, clinics, provider networks)</li>
+          <li><strong>Executive Boards</strong> (governance, risk oversight)</li>
+          <li><strong>Patient Advocates</strong> (fairness, integrity, patient safety)</li>
+        </ul>
+
+        <p>
+          Primary goal: reduce impersonation, replay attacks, and deepfake misuse in telehealth,
+          claims, consent, and remote documentation workflows.
+        </p>
+
+        <h3>2. Position in Governance Architecture</h3>
+        <p>This module sits between:</p>
+        <ul>
+          <li><strong>Identity assurance</strong> (ID documents, patient/provider records)</li>
+          <li><strong>Operational workflow</strong> (EHR, CRM, claims, telehealth platforms)</li>
+        </ul>
+
+        <p>
+          Output is interpreted as:
+          <em>“Liveness completed; human-like response detected – requires human or automated review.”</em>
+        </p>
+
+        <h3>3. Privacy & Data Protection</h3>
+        <ul>
+          <li>Runs 100% locally in the browser (demo implementation)</li>
+          <li>No data is sent, stored, profiled or transmitted by default</li>
+          <li>Can be deployed in GDPR/HIPAA-compliant environments</li>
+          <li>Any storage and logging is controlled by the implementing organization</li>
+        </ul>
+
+        <h3>4. Technical Characteristics</h3>
+        <ul>
+          <li>Uses <code>getUserMedia</code> for camera access</li>
+          <li>Behavioral prompts: look straight → turn left → turn right → nod</li>
+          <li>No biometric templates are created in this demo</li>
+          <li>Designed to be extendable with:
+            <ul>
+              <li>Face tracking and landmark analysis</li>
+              <li>Spoof detection (e.g. flat-screen patterns, glare)</li>
+              <li>Backend risk scoring and audit logging</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>5. Stakeholder Risk Controls</h3>
+        <ul>
+          <li>Not a full identity or fraud-prevention system</li>
+          <li>Reduces exposure to basic deepfake / replay risks</li>
+          <li>Supports fairer claims handling and telehealth integrity for payors</li>
+          <li>Supports governance, AI-risk and cyber-security reporting for boards</li>
+          <li>Protects patients from impersonation and misuse of their identity</li>
+          <li>Must be combined with:
+            <ul>
+              <li>ID / KYC verification</li>
+              <li>Contextual risk scoring (transaction size, device, geography)</li>
+              <li>Clear escalation routes for suspicious sessions</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>6. Integration Roadmap</h3>
+        <ol>
+          <li>Pilot implementation with a defined user/patient/provider group</li>
+          <li>Add a quantitative liveness score (0–100) with computer vision checks</li>
+          <li>Log liveness events in secure backend systems (timestamp, device, score)</li>
+          <li>Attach decision rules to score thresholds (e.g. score &lt; 60 → manual review)</li>
+          <li>Include this module in internal AI, digital-health, and risk documentation</li>
+        </ol>
+
+        <p class="governance-footnote">
+          This section is written for multidisciplinary governance review across payors, regulators,
+          administrative bodies, executive boards, and patient-advocacy groups.
+        </p>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal hidden">
+    <div class="modal-content">
+      <button id="closeHelpBtn" class="close-btn">×</button>
+      <h2>User Help – Encounter Liveness Check</h2>
+
+      <h3>1. Purpose</h3>
+      <p>Confirms that the camera is seeing a live human reacting in real time.</p>
+
+      <h3>2. How to use</h3>
+      <ol>
+        <li>Click “Start camera” and allow access.</li>
+        <li>Position your face with good lighting.</li>
+        <li>Click “Run liveness check”.</li>
+        <li>Follow the instructions on the screen.</li>
+        <li>Click “Stop camera” when finished.</li>
+      </ol>
+
+      <h3>3. Tips for better readings</h3>
+      <ul>
+        <li>Use a well-lit room; avoid bright light behind you.</li>
+        <li>Place laptop/tablet on a stable surface.</li>
+        <li>Make clear, visible head movements when prompted.</li>
+      </ul>
+
+      <h3>4. Data & privacy</h3>
+      <p>All processing runs locally in your browser in this demo; no video is uploaded.</p>
+
+      <h3>5. Disclaimer</h3>
+      <p>
+        This is a technical liveness layer. It must be combined with your own identity, KYC, and
+        risk-management procedures. It is not a stand-alone guarantee against deepfakes or fraud.
+      </p>
+    </div>
+  </div>
+
+  <!-- Inline JS -->
+  <script>
+    let stream = null;
+    let livenessRunning = false;
+    let progressInterval = null;
+
+    const video = document.getElementById("video");
+    const startCameraBtn = document.getElementById("startCameraBtn");
+    const stopCameraBtn = document.getElementById("stopCameraBtn");
+    const runLivenessBtn = document.getElementById("runLivenessBtn");
+    const helpBtn = document.getElementById("helpBtn");
+    const closeHelpBtn = document.getElementById("closeHelpBtn");
+    const helpModal = document.getElementById("helpModal");
+    const statusText = document.getElementById("statusText");
+    const progressBar = document.getElementById("progressBar");
+    const overlay = document.getElementById("overlay");
+    const overlayText = document.getElementById("overlayText");
+
+    const governanceToggle = document.getElementById("governanceToggle");
+    const governanceBody = document.getElementById("governanceBody");
+    const governanceChevron = document.getElementById("governanceChevron");
+
+    function setStatus(text) {
+      statusText.textContent = text;
+    }
+
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = stream;
+        setStatus("Camera running");
+        startCameraBtn.disabled = true;
+        stopCameraBtn.disabled = false;
+        runLivenessBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        setStatus("Cannot access camera");
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      startCameraBtn.disabled = false;
+      stopCameraBtn.disabled = true;
+      runLivenessBtn.disabled = true;
+      setStatus("Camera stopped");
+      stopLiveness();
+    }
+
+    function showOverlay(msg) {
+      overlayText.textContent = msg;
+      overlay.classList.remove("hidden");
+    }
+
+    function hideOverlay() {
+      overlay.classList.add("hidden");
+    }
+
+    function stopLiveness() {
+      livenessRunning = false;
+      if (progressInterval) clearInterval(progressInterval);
+      progressBar.value = 0;
+      hideOverlay();
+    }
+
+    function runLiveness() {
+      if (!stream || livenessRunning) return;
+      livenessRunning = true;
+
+      const steps = [
+        { text: "Look straight into the camera", percent: 25 },
+        { text: "Turn your head slowly to the LEFT", percent: 50 },
+        { text: "Turn your head slowly to the RIGHT", percent: 75 },
+        { text: "Nod your head UP and DOWN", percent: 100 }
+      ];
+
+      let index = 0;
+      showOverlay(steps[index].text);
+      progressBar.value = steps[index].percent;
+      setStatus("Liveness running…");
+
+      progressInterval = setInterval(() => {
+        index++;
+        if (index >= steps.length) {
+          stopLiveness();
+          progressBar.value = 100;
+          setStatus("Liveness finished – review required.");
+          return;
+        }
+        showOverlay(steps[index].text);
+        progressBar.value = steps[index].percent;
+      }, 2500);
+    }
+
+    // Button events
+    startCameraBtn.addEventListener("click", startCamera);
+    stopCameraBtn.addEventListener("click", stopCamera);
+    runLivenessBtn.addEventListener("click", runLiveness);
+
+    // Help modal
+    helpBtn.addEventListener("click", () => {
+      helpModal.classList.remove("hidden");
+    });
+
+    closeHelpBtn.addEventListener("click", () => {
+      helpModal.classList.add("hidden");
+    });
+
+    helpModal.addEventListener("click", (e) => {
+      if (e.target === helpModal) {
+        helpModal.classList.add("hidden");
+      }
+    });
+
+    // Governance collapsible
+    governanceToggle.addEventListener("click", () => {
+      const collapsed = governanceBody.classList.contains("collapsed");
+      if (collapsed) {
+        governanceBody.classList.remove("collapsed");
+        governanceChevron.classList.add("rotated");
+      } else {
+        governanceBody.classList.add("collapsed");
+        governanceChevron.classList.remove("rotated");
+      }
+    });
+  </script>
 </body>
 </html>
+
