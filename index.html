@@ -498,7 +498,7 @@
       <h3>2. Signal quality</h3>
       <ul>
         <li>Green dot: signal usable (HR detected in a plausible range).</li>
-        <li>Red dot: signal weak/noisy – improve lighting and stability.</li>
+        <li>Red dot: low-confidence signal – improve lighting and stability.</li>
       </ul>
       <h3>3. Privacy</h3>
       <ul>
@@ -701,7 +701,7 @@
       hrDebugEl.textContent = (faceDetector
         ? "Face detection active (ROI follows face).\n"
         : "No FaceDetector support – using central ROI.\n") +
-        "Debug will show samples, duration and raw vs clamped BPM.";
+        "Debug will show samples, duration, raw & clamped BPM, quality.";
 
       startHRBtn.disabled = true;
       stopHRBtn.disabled = false;
@@ -791,24 +791,36 @@
 
       if (duration >= HR_MIN_WINDOW_SEC) {
         const hrEstimate = estimateHeartRateFromSignal(hrSignal, hrTimestamps);
-        if (hrEstimate && hrEstimate.quality > 0.2) {
+        if (hrEstimate) {
           const rawBpm = hrEstimate.rawBpm;
           const clampedBpm = hrEstimate.bpm;
+          const quality = hrEstimate.quality;
+
           hrValueEl.textContent = Math.round(clampedBpm) + " bpm";
-          hrStatusEl.textContent =
-            "HR estimated (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
-          hrQualityDot.className = "quality-dot green";
+
+          if (quality >= 0.05) {
+            hrStatusEl.textContent =
+              "HR estimated (usable signal, quality: " + (quality * 100).toFixed(0) + "%).";
+            hrQualityDot.className = "quality-dot green";
+          } else {
+            hrStatusEl.textContent =
+              "HR estimated (low-confidence signal, quality: " + (quality * 100).toFixed(0) + "%).";
+            hrQualityDot.className = "quality-dot red";
+          }
+
           lastHREstimate = {
             bpm: clampedBpm,
-            quality: hrEstimate.quality,
+            quality: quality,
             durationSec: duration
           };
+
           hrDebugEl.textContent +=
             "\nRaw BPM: " + rawBpm.toFixed(1) +
-            " | Clamped BPM: " + clampedBpm.toFixed(1);
+            " | Clamped BPM: " + clampedBpm.toFixed(1) +
+            " | Quality: " + (quality * 100).toFixed(1) + "%";
         } else {
           hrStatusEl.textContent =
-            "Signal weak/noisy. Improve lighting and stay very still.";
+            "No dominant HR frequency found. Improve lighting and stay very still.";
           hrQualityDot.className = "quality-dot red";
         }
       } else {
@@ -852,7 +864,8 @@
           im += x[n] * Math.sin(angle);
         }
         const amp = Math.sqrt(re * re + im * im);
-        totalAmp += Math.max(amp, 0);
+        if (!isFinite(amp) || amp < 0) continue;
+        totalAmp += amp;
         if (amp > bestAmp) {
           bestAmp = amp;
           bestFreq = Math.abs(freq); // ensure positive
@@ -862,12 +875,12 @@
       if (!bestFreq || bestAmp <= 0 || totalAmp <= 0) return null;
 
       const rawBpm = bestFreq * 60;
-      let bpm = rawBpm;
+      if (!isFinite(rawBpm) || rawBpm <= 0) return null;
 
-      if (!isFinite(bpm) || bpm <= 0) return null;
+      let bpm = rawBpm;
       bpm = Math.max(HR_MIN_BPM, Math.min(HR_MAX_BPM, bpm));
 
-      const quality = bestAmp / totalAmp;
+      const quality = Math.max(0, Math.min(1, bestAmp / totalAmp));
 
       return { bpm, rawBpm, quality };
     }
