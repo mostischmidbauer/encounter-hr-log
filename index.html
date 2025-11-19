@@ -2,17 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Encounter Liveness & Anti-Deepfake Check + Experimental HR (rPPG)</title>
+  <title>Encounter Liveness & Anti-Deepfake + Experimental HR (rPPG)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Inline CSS -->
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
     body {
       min-height: 100vh;
@@ -29,15 +24,8 @@
       border-bottom: 1px solid #262c4a;
     }
 
-    .app-header h1 {
-      font-size: 1.6rem;
-      margin-bottom: 0.25rem;
-    }
-
-    .app-header p {
-      font-size: 0.95rem;
-      opacity: 0.85;
-    }
+    .app-header h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+    .app-header p { font-size: 0.95rem; opacity: 0.85; }
 
     .app-main {
       display: flex;
@@ -46,8 +34,7 @@
       padding: 1.5rem;
     }
 
-    .camera-card,
-    .info-card {
+    .camera-card, .info-card {
       background: #151a30;
       border-radius: 1rem;
       padding: 1.25rem;
@@ -64,19 +51,12 @@
       margin:auto;
     }
 
-    video {
-      width:100%;
-      display:block;
-      transform: scale(1.02);
-    }
+    video { width:100%; display:block; transform: scale(1.02); }
 
     .overlay {
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       background:rgba(0,0,0,0.45);
-      display:flex;
-      justify-content:center;
-      align-items:center;
+      display:flex; justify-content:center; align-items:center;
     }
 
     .overlay span {
@@ -88,9 +68,7 @@
       text-align:center;
     }
 
-    .hidden {
-      display:none !important;
-    }
+    .hidden { display:none !important; }
 
     .controls {
       margin-top:1rem;
@@ -111,11 +89,7 @@
       transition:0.1s ease all;
     }
 
-    button:disabled {
-      opacity:0.5;
-      cursor:default;
-    }
-
+    button:disabled { opacity:0.5; cursor:default; }
     button:not(:disabled):hover {
       transform: translateY(-1px);
       box-shadow:0 4px 10px rgba(36,107,253,0.6);
@@ -129,11 +103,7 @@
       font-size:0.9rem;
     }
 
-    .status-row {
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:0.4rem;
-    }
+    .status-row { display:flex; justify-content:space-between; margin-bottom:0.4rem; }
 
     progress {
       width:100%;
@@ -142,15 +112,9 @@
       overflow:hidden;
     }
 
-    progress::-webkit-progress-bar {
-      background:#20263d;
-    }
-    progress::-webkit-progress-value {
-      background:#24d18f;
-    }
-    progress::-moz-progress-bar {
-      background:#24d18f;
-    }
+    progress::-webkit-progress-bar { background:#20263d; }
+    progress::-webkit-progress-value { background:#24d18f; }
+    progress::-moz-progress-bar { background:#24d18f; }
 
     .disclaimer {
       margin-top:0.8rem;
@@ -158,55 +122,24 @@
       opacity:0.8;
     }
 
-    .info-card h2 {
-      font-size:1.2rem;
-      margin-bottom:0.4rem;
-    }
-
-    .info-card p {
-      font-size:0.9rem;
-      opacity:0.9;
-    }
+    .info-card h2 { font-size:1.2rem; margin-bottom:0.4rem; }
+    .info-card p { font-size:0.9rem; opacity:0.9; }
 
     /* HR block */
-
     .hr-block {
       margin-top:0.8rem;
       padding-top:0.6rem;
       border-top:1px solid #262c4a;
       font-size:0.9rem;
     }
-
-    .hr-row {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:0.4rem;
-    }
-
-    .hr-value {
-      font-weight:bold;
-      font-size:1rem;
-    }
-
-    .hr-status {
-      font-size:0.8rem;
-      opacity:0.85;
-    }
-
-    .hr-warning {
-      font-size:0.75rem;
-      opacity:0.7;
-      margin-top:0.25rem;
-    }
+    .hr-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem; }
+    .hr-value { font-weight:bold; font-size:1rem; }
+    .hr-status { font-size:0.8rem; opacity:0.9; }
+    .hr-debug { font-size:0.75rem; opacity:0.7; margin-top:0.1rem; }
+    .hr-warning { font-size:0.75rem; opacity:0.7; margin-top:0.25rem; }
 
     /* Governance collapsible */
-
-    .governance-card {
-      padding:0;
-      overflow:hidden;
-    }
-
+    .governance-card { padding:0; overflow:hidden; }
     .collapsible-header {
       width:100%;
       background:#151a30;
@@ -218,144 +151,61 @@
       border-radius:1rem 1rem 0 0;
       cursor:pointer;
     }
-
     .collapsible-header span:first-child {
-      flex:1;
-      padding-right:0.5rem;
-      font-size:0.95rem;
-      text-align:left;
+      flex:1; padding-right:0.5rem; font-size:0.95rem; text-align:left;
     }
+    .chevron { font-size:0.9rem; transition:0.2s; }
+    .chevron.rotated { transform:rotate(-90deg); }
 
-    .chevron {
-      font-size:0.9rem;
-      transition:0.2s;
+    .collapsible-body { padding:1rem 1.1rem 1.1rem; font-size:0.9rem; }
+    .collapsible-body.collapsed { display:none; }
+    .collapsible-body h3 { margin-top:0.5rem; margin-bottom:0.3rem; font-size:1rem; }
+    .collapsible-body p, .collapsible-body li { font-size:0.9rem; }
+    .collapsible-body ul, .collapsible-body ol {
+      margin-left:1.1rem; margin-bottom:0.3rem;
     }
-
-    .chevron.rotated {
-      transform:rotate(-90deg);
-    }
-
-    .collapsible-body {
-      padding:1rem 1.1rem 1.1rem;
-      font-size:0.9rem;
-    }
-
-    .collapsible-body.collapsed {
-      display:none;
-    }
-
-    .collapsible-body h3 {
-      margin-top:0.5rem;
-      margin-bottom:0.3rem;
-      font-size:1rem;
-    }
-
-    .collapsible-body p,
-    .collapsible-body li {
-      font-size:0.9rem;
-    }
-
-    .collapsible-body ul,
-    .collapsible-body ol {
-      margin-left:1.1rem;
-      margin-bottom:0.3rem;
-    }
-
     .governance-footnote {
-      margin-top:0.7rem;
-      font-size:0.85rem;
-      opacity:0.75;
+      margin-top:0.7rem; font-size:0.85rem; opacity:0.75;
     }
 
     /* Modal */
-
     .modal {
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:rgba(0,0,0,0.65);
-      display:flex;
-      justify-content:center;
-      align-items:center;
+      display:flex; justify-content:center; align-items:center;
       z-index:100;
     }
-
     .modal-content {
-      background:#151a30;
-      padding:1.5rem;
-      border-radius:1rem;
-      max-width:600px;
-      max-height:80vh;
-      overflow-y:auto;
-      border:1px solid #262c4a;
-      position:relative;
+      background:#151a30; padding:1.5rem; border-radius:1rem;
+      max-width:600px; max-height:80vh; overflow-y:auto;
+      border:1px solid #262c4a; position:relative;
     }
-
-    .modal-content h2 {
-      margin-bottom:0.4rem;
+    .modal-content h2 { margin-bottom:0.4rem; }
+    .modal-content h3 { margin-top:0.8rem; margin-bottom:0.25rem; font-size:1rem; }
+    .modal-content p, .modal-content li { font-size:0.9rem; }
+    .modal-content ul, .modal-content ol {
+      margin-left:1.1rem; margin-bottom:0.3rem;
     }
-
-    .modal-content h3 {
-      margin-top:0.8rem;
-      margin-bottom:0.25rem;
-      font-size:1rem;
-    }
-
-    .modal-content p,
-    .modal-content li {
-      font-size:0.9rem;
-    }
-
-    .modal-content ul,
-    .modal-content ol {
-      margin-left:1.1rem;
-      margin-bottom:0.3rem;
-    }
-
     .close-btn {
-      position:absolute;
-      top:1rem;
-      right:1rem;
-      background:#262c4a;
-      width:28px;
-      height:28px;
-      border-radius:999px;
-      border:none;
-      color:#f5f5f5;
-      cursor:pointer;
-      font-size:1rem;
-      line-height:28px;
-      text-align:center;
+      position:absolute; top:1rem; right:1rem;
+      background:#262c4a; width:28px; height:28px;
+      border-radius:999px; border:none;
+      color:#f5f5f5; cursor:pointer; font-size:1rem;
+      line-height:28px; text-align:center;
     }
-
-    /* Layout for wider screens */
 
     @media (min-width: 900px) {
-      .app-main {
-        flex-direction:row;
-        align-items:flex-start;
-      }
-
-      .camera-card,
-      .info-card {
-        flex:1;
-      }
+      .app-main { flex-direction:row; align-items:flex-start; }
+      .camera-card, .info-card { flex:1; }
     }
-
-    /* Print mode for PDF export */
 
     @media print {
       body { background:#ffffff; color:#000000; }
-      .app-header,
-      .camera-card,
-      .info-card {
-        background:#ffffff;
-        color:#000000;
-        border:1px solid #cccccc;
-        box-shadow:none;
+      .app-header, .camera-card, .info-card {
+        background:#ffffff; color:#000000;
+        border:1px solid #cccccc; box-shadow:none;
       }
-      .modal {
-        display:none !important;
-      }
+      .modal { display:none !important; }
     }
   </style>
 </head>
@@ -401,8 +251,11 @@
           <span class="hr-value" id="hrValue">-- bpm</span>
         </div>
         <div class="hr-row">
-          <span class="hr-status" id="hrStatus">HR module idle.</span>
+          <span class="hr-status" id="hrStatus">
+            HR idle. Press "Start HR (experimental)" and stay still ~10–20 seconds.
+          </span>
         </div>
+        <div class="hr-debug" id="hrDebug"></div>
         <p class="hr-warning">
           This heart-rate function uses experimental camera-based photoplethysmography (rPPG).
           It is not a medical device and must not be used for diagnosis or treatment decisions.
@@ -412,7 +265,7 @@
       <div class="disclaimer">
         <p>
           Liveness & rPPG layer provided by
-          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (OFFICE@DASPQW.COM MOSTISCHMIDBAUER@WEB.DE +4915225321568 Kronwittener Str.1 84367 TANN DE).
+          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (MOSTISCHMIDBAUER@WEB.DE WWW.VIRTUALCARESOLUTION.DE).
         </p>
         <p>
           Use only within your organization’s security and data-protection policies; no guarantee of
@@ -439,13 +292,11 @@
       </button>
 
       <div class="collapsible-body collapsed" id="governanceBody">
-
         <h3>1. Purpose & Scope</h3>
         <p>
           This module provides a structured <strong>challenge–response liveness check</strong> for remote
           encounters and an optional experimental HR (rPPG) signal. It is designed to protect:
         </p>
-
         <ul>
           <li><strong>Payors</strong> (insurance, health funds)</li>
           <li><strong>Regulators</strong> (health authorities, data-protection bodies)</li>
@@ -453,26 +304,22 @@
           <li><strong>Executive Boards</strong> (governance, risk oversight)</li>
           <li><strong>Patient Advocates</strong> (fairness, integrity, patient safety)</li>
         </ul>
-
         <p>
           Primary goal: reduce impersonation, replay attacks, and deepfake misuse in telehealth,
           claims, consent, and remote documentation workflows. HR (rPPG) is a secondary, optional
           signal for research and monitoring concepts.
         </p>
-
         <h3>2. Position in Governance Architecture</h3>
         <p>This module sits between:</p>
         <ul>
           <li><strong>Identity assurance</strong> (ID documents, patient/provider records)</li>
           <li><strong>Operational workflow</strong> (EHR, CRM, claims, telehealth platforms)</li>
         </ul>
-
         <p>
           Output is interpreted as:
           <em>“Liveness completed; human-like response detected – requires human or automated review.”</em>
           HR output is an <strong>experimental signal</strong>, not a clinical vital sign.
         </p>
-
         <h3>3. Privacy & Data Protection</h3>
         <ul>
           <li>Runs 100% locally in the browser (demo implementation)</li>
@@ -480,47 +327,32 @@
           <li>Can be deployed in GDPR/HIPAA-compliant environments</li>
           <li>Any storage and logging is controlled by the implementing organization</li>
         </ul>
-
         <h3>4. Technical Characteristics</h3>
         <ul>
           <li>Uses <code>getUserMedia</code> for camera access</li>
           <li>Liveness: scripted prompts (look straight → left → right → nod)</li>
           <li>HR (rPPG): frame sampling of a small facial region, green-channel intensity over time</li>
-          <li>Naive frequency analysis (discrete spectrum) to estimate dominant heart-rate band</li>
+          <li>Simple frequency analysis to estimate dominant heart-rate band</li>
           <li>No biometric templates are created in this demo</li>
         </ul>
-
         <h3>5. Stakeholder Risk Controls</h3>
         <ul>
           <li>Not a full identity, fraud-prevention, or medical monitoring system</li>
           <li>Reduces exposure to basic deepfake / replay risks</li>
-          <li>Supports fairer claims handling and telehealth integrity for payors</li>
-          <li>Supports governance, AI-risk and cyber-security reporting for boards</li>
-          <li>Protects patients from impersonation and misuse of their identity</li>
           <li>HR (rPPG) is strictly experimental and must not be used for diagnosis or triage</li>
-          <li>Must be combined with:
-            <ul>
-              <li>ID / KYC verification</li>
-              <li>Contextual risk scoring (transaction size, device, geography)</li>
-              <li>Clear escalation routes for suspicious sessions</li>
-            </ul>
-          </li>
         </ul>
-
         <h3>6. Integration Roadmap</h3>
         <ol>
           <li>Pilot implementation with a defined user/patient/provider group</li>
-          <li>Add more robust CV-based liveness scoring (0–100) and rPPG signal quality metrics</li>
+          <li>Add more robust CV-based liveness scoring and rPPG signal quality metrics</li>
           <li>Log liveness and HR events in secure backend systems (timestamp, device, score)</li>
-          <li>Attach decision rules to liveness/HR thresholds (e.g. score &lt; 60 → manual review)</li>
+          <li>Attach decision rules to thresholds (e.g. score &lt; 60 → manual review)</li>
           <li>Include this module in internal AI, digital-health, and risk documentation</li>
         </ol>
-
         <p class="governance-footnote">
           This section is written for multidisciplinary governance review across payors, regulators,
           administrative bodies, executive boards, and patient-advocacy groups.
         </p>
-
       </div>
     </section>
   </main>
@@ -530,33 +362,28 @@
     <div class="modal-content">
       <button id="closeHelpBtn" class="close-btn">×</button>
       <h2>User Help – Encounter Liveness & HR (rPPG)</h2>
-
       <h3>1. Purpose</h3>
       <p>
         Confirms that the camera is seeing a live human reacting in real time and optionally estimates
         heart rate from subtle color changes in the face (rPPG).
       </p>
-
       <h3>2. How to use</h3>
       <ol>
         <li>Click “Start camera” and allow access.</li>
         <li>Position your face with good, even lighting.</li>
         <li>Click “Run liveness check” and follow instructions (optional).</li>
-        <li>Click “Start HR (experimental)” and remain still for 20–30 seconds.</li>
+        <li>Click “Start HR (experimental)” and remain still for 10–20 seconds.</li>
         <li>Read the HR value once status indicates a stable estimate.</li>
         <li>Click “Stop HR” and “Stop camera” when finished.</li>
       </ol>
-
       <h3>3. Tips for better HR readings</h3>
       <ul>
         <li>Use a well-lit room with light in front of your face, not behind you.</li>
-        <li>Keep your head as still as possible (minimal talking and movement).</li>
-        <li>Avoid strong color changes on the face (makeup, colored lights, etc.).</li>
+        <li>Keep your head as still as possible (no talking, minimal movement).</li>
+        <li>Avoid strong color changes on the face (colored light, heavy filters).</li>
       </ul>
-
       <h3>4. Data & privacy</h3>
       <p>All processing runs locally in your browser in this demo; no video is uploaded.</p>
-
       <h3>5. Disclaimer</h3>
       <p>
         The HR feature is experimental and not a medical device. It must not be used to make
@@ -565,7 +392,6 @@
     </div>
   </div>
 
-  <!-- Inline JS -->
   <script>
     let stream = null;
     let livenessRunning = false;
@@ -587,6 +413,7 @@
 
     const hrValueEl = document.getElementById("hrValue");
     const hrStatusEl = document.getElementById("hrStatus");
+    const hrDebugEl = document.getElementById("hrDebug");
 
     const governanceToggle = document.getElementById("governanceToggle");
     const governanceBody = document.getElementById("governanceBody");
@@ -604,10 +431,10 @@
         });
         if (video) video.srcObject = stream;
         setStatus("Camera running");
-        if (startCameraBtn) startCameraBtn.disabled = true;
-        if (stopCameraBtn) stopCameraBtn.disabled = false;
-        if (runLivenessBtn) runLivenessBtn.disabled = false;
-        if (startHRBtn) startHRBtn.disabled = false;
+        startCameraBtn.disabled = true;
+        stopCameraBtn.disabled = false;
+        runLivenessBtn.disabled = false;
+        startHRBtn.disabled = false;
       } catch (err) {
         console.error(err);
         setStatus("Cannot access camera");
@@ -620,11 +447,11 @@
         stream = null;
       }
       if (video) video.srcObject = null;
-      if (startCameraBtn) startCameraBtn.disabled = false;
-      if (stopCameraBtn) stopCameraBtn.disabled = true;
-      if (runLivenessBtn) runLivenessBtn.disabled = true;
-      if (startHRBtn) startHRBtn.disabled = true;
-      if (stopHRBtn) stopHRBtn.disabled = true;
+      startCameraBtn.disabled = false;
+      stopCameraBtn.disabled = true;
+      runLivenessBtn.disabled = true;
+      startHRBtn.disabled = true;
+      stopHRBtn.disabled = true;
       setStatus("Camera stopped");
       stopLiveness();
       stopHRMonitoring();
@@ -663,19 +490,19 @@
 
       let index = 0;
       showOverlay(steps[index].text);
-      if (progressBar) progressBar.value = steps[index].percent;
+      progressBar.value = steps[index].percent;
       setStatus("Liveness running…");
 
       progressInterval = setInterval(() => {
         index++;
         if (index >= steps.length) {
           stopLiveness();
-          if (progressBar) progressBar.value = 100;
+          progressBar.value = 100;
           setStatus("Liveness finished – review required.");
           return;
         }
         showOverlay(steps[index].text);
-        if (progressBar) progressBar.value = steps[index].percent;
+        progressBar.value = steps[index].percent;
       }, 2500);
     }
 
@@ -684,7 +511,7 @@
     const HR_MIN_BPM = 42;
     const HR_MAX_BPM = 180;
     const HR_SAMPLE_INTERVAL_MS = 80; // ~12.5 Hz
-    const HR_MIN_WINDOW_SEC = 12;     // min 12 seconds of data
+    const HR_MIN_WINDOW_SEC = 8;      // make it easier: 8 seconds window
 
     let hrTimer = null;
     let hrSignal = [];
@@ -699,16 +526,17 @@
 
     function startHRMonitoring() {
       if (!stream || !video) {
-        if (hrStatusEl) hrStatusEl.textContent = "Start camera first.";
+        hrStatusEl.textContent = "Start camera first.";
         return;
       }
       if (hrTimer) return;
 
       resetHRBuffers();
-      if (hrValueEl) hrValueEl.textContent = "-- bpm";
-      if (hrStatusEl) hrStatusEl.textContent = "Collecting signal… stay still and well lit.";
-      if (startHRBtn) startHRBtn.disabled = true;
-      if (stopHRBtn) stopHRBtn.disabled = false;
+      hrValueEl.textContent = "-- bpm";
+      hrStatusEl.textContent = "Collecting signal… stay still, 8–15 seconds.";
+      hrDebugEl.textContent = "";
+      startHRBtn.disabled = true;
+      stopHRBtn.disabled = false;
 
       hrTimer = setInterval(sampleHRFrame, HR_SAMPLE_INTERVAL_MS);
     }
@@ -718,9 +546,10 @@
         clearInterval(hrTimer);
         hrTimer = null;
       }
-      if (hrStatusEl) hrStatusEl.textContent = "HR module idle.";
-      if (startHRBtn) startHRBtn.disabled = !stream;
-      if (stopHRBtn) stopHRBtn.disabled = true;
+      hrStatusEl.textContent = "HR idle. Press Start HR again to re-measure.";
+      hrDebugEl.textContent = "";
+      startHRBtn.disabled = !stream;
+      stopHRBtn.disabled = true;
     }
 
     function sampleHRFrame() {
@@ -729,7 +558,6 @@
       const w = video.videoWidth;
       const h = video.videoHeight;
 
-      // small downscaled ROI in upper-center (forehead/upper face)
       const roiWidth = Math.floor(w * 0.2);
       const roiHeight = Math.floor(h * 0.15);
       const roiX = Math.floor(w * 0.4);
@@ -756,34 +584,39 @@
       hrSignal.push(avgG);
       hrTimestamps.push(now);
 
-      // Keep last 25 seconds max to limit computation
       const maxWindowSec = 25;
       while (hrTimestamps.length > 0 && (now - hrTimestamps[0]) > maxWindowSec) {
         hrTimestamps.shift();
         hrSignal.shift();
       }
 
-      const duration = hrTimestamps.length > 1 ? (hrTimestamps[hrTimestamps.length - 1] - hrTimestamps[0]) : 0;
+      const duration = hrTimestamps.length > 1
+        ? (hrTimestamps[hrTimestamps.length - 1] - hrTimestamps[0])
+        : 0;
+
+      hrDebugEl.textContent = "Samples: " + hrSignal.length +
+        " | Duration: " + duration.toFixed(1) + " s";
+
       if (duration >= HR_MIN_WINDOW_SEC) {
         const hrEstimate = estimateHeartRateFromSignal(hrSignal, hrTimestamps);
-        if (hrEstimate && hrEstimate.quality > 0.25) {
-          if (hrValueEl) hrValueEl.textContent = Math.round(hrEstimate.bpm) + " bpm";
-          if (hrStatusEl) hrStatusEl.textContent = "Stable estimate (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
-        } else if (hrStatusEl) {
-          hrStatusEl.textContent = "Signal weak or noisy. Try better lighting and stay still.";
+        if (hrEstimate && hrEstimate.quality > 0.2) {
+          hrValueEl.textContent = Math.round(hrEstimate.bpm) + " bpm";
+          hrStatusEl.textContent =
+            "Stable estimate (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
+        } else {
+          hrStatusEl.textContent =
+            "Signal weak/noisy. Try better lighting and stay very still.";
         }
       } else {
-        if (hrStatusEl) {
-          hrStatusEl.textContent = "Collecting signal (" + duration.toFixed(1) + " s)…";
-        }
+        hrStatusEl.textContent =
+          "Collecting signal (" + duration.toFixed(1) + " s)… hold still, good light.";
       }
     }
 
     function estimateHeartRateFromSignal(signal, timestamps) {
       const N = signal.length;
-      if (N < 30) return null;
+      if (N < 40) return null;
 
-      // Detrend: subtract mean
       let mean = 0;
       for (let i = 0; i < N; i++) mean += signal[i];
       mean /= N;
@@ -791,7 +624,6 @@
       const x = new Array(N);
       for (let i = 0; i < N; i++) x[i] = signal[i] - mean;
 
-      // Approximate sampling rate from timestamps
       const duration = timestamps[N - 1] - timestamps[0];
       if (duration <= 0) return null;
       const fs = N / duration;
@@ -803,7 +635,6 @@
       let bestAmp = 0;
       let totalAmp = 0;
 
-      // naive DFT in band
       for (let k = 1; k < N; k++) {
         const freq = k * fs / N;
         if (freq < minHz || freq > maxHz) continue;
@@ -827,49 +658,43 @@
       if (!bestFreq || bestAmp <= 0 || totalAmp <= 0) return null;
 
       const bpm = bestFreq * 60;
-      const quality = bestAmp / totalAmp; // 0..1, very rough
+      const quality = bestAmp / totalAmp;
 
       return { bpm, quality };
     }
 
-    /* Attach events */
+    /* Events */
 
-    if (startCameraBtn) startCameraBtn.addEventListener("click", startCamera);
-    if (stopCameraBtn) stopCameraBtn.addEventListener("click", stopCamera);
-    if (runLivenessBtn) runLivenessBtn.addEventListener("click", runLiveness);
-    if (startHRBtn) startHRBtn.addEventListener("click", startHRMonitoring);
-    if (stopHRBtn) stopHRBtn.addEventListener("click", stopHRMonitoring);
+    startCameraBtn.addEventListener("click", startCamera);
+    stopCameraBtn.addEventListener("click", stopCamera);
+    runLivenessBtn.addEventListener("click", runLiveness);
+    startHRBtn.addEventListener("click", startHRMonitoring);
+    stopHRBtn.addEventListener("click", stopHRMonitoring);
 
-    if (helpBtn && helpModal) {
-      helpBtn.addEventListener("click", () => {
-        helpModal.classList.remove("hidden");
-      });
-    }
+    helpBtn.addEventListener("click", () => {
+      helpModal.classList.remove("hidden");
+    });
 
-    if (closeHelpBtn && helpModal) {
-      closeHelpBtn.addEventListener("click", () => {
+    closeHelpBtn.addEventListener("click", () => {
+      helpModal.classList.add("hidden");
+    });
+
+    helpModal.addEventListener("click", (e) => {
+      if (e.target === helpModal) {
         helpModal.classList.add("hidden");
-      });
+      }
+    });
 
-      helpModal.addEventListener("click", (e) => {
-        if (e.target === helpModal) {
-          helpModal.classList.add("hidden");
-        }
-      });
-    }
-
-    if (governanceToggle && governanceBody && governanceChevron) {
-      governanceToggle.addEventListener("click", () => {
-        const collapsed = governanceBody.classList.contains("collapsed");
-        if (collapsed) {
-          governanceBody.classList.remove("collapsed");
-          governanceChevron.classList.add("rotated");
-        } else {
-          governanceBody.classList.add("collapsed");
-          governanceChevron.classList.remove("rotated");
-        }
-      });
-    }
+    governanceToggle.addEventListener("click", () => {
+      const collapsed = governanceBody.classList.contains("collapsed");
+      if (collapsed) {
+        governanceBody.classList.remove("collapsed");
+        governanceChevron.classList.add("rotated");
+      } else {
+        governanceBody.classList.add("collapsed");
+        governanceChevron.classList.remove("rotated");
+      }
+    });
   </script>
 </body>
 </html>
