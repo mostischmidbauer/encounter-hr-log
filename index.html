@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Encounter Liveness & Anti-Deepfake + Experimental HR (rPPG)</title>
+  <title>Encounter Liveness & Anti-Deepfake + Optical HR (rPPG)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
@@ -181,7 +181,7 @@
 
     .hr-value { font-weight:bold; font-size:1rem; }
     .hr-status { font-size:0.8rem; opacity:0.9; }
-    .hr-debug { font-size:0.75rem; opacity:0.7; margin-top:0.1rem; }
+    .hr-debug { font-size:0.75rem; opacity:0.7; margin-top:0.1rem; white-space:pre-line; }
     .hr-warning { font-size:0.75rem; opacity:0.7; margin-top:0.25rem; }
 
     .quality-dot {
@@ -245,7 +245,6 @@
       opacity:0.8;
     }
 
-    /* Local-only / compliance badge */
     .compliance-badge {
       margin-top:0.75rem;
       font-size:0.8rem;
@@ -253,7 +252,6 @@
       border-top:1px solid #262c4a;
       padding-top:0.5rem;
     }
-    .compliance-badge strong { color:#24d18f; }
 
     /* Governance collapsible */
     .governance-card { padding:0; overflow:hidden; }
@@ -324,7 +322,7 @@
 <body>
   <header class="app-header">
     <h1>Encounter Liveness Check</h1>
-    <p>Centered camera view, local-only processing, compliance-ready logging.</p>
+    <p>Centered camera, local-only processing, compliance-ready JSON logs.</p>
   </header>
 
   <main class="app-main">
@@ -340,8 +338,8 @@
       <div class="controls">
         <button id="startCameraBtn">Start camera</button>
         <button id="stopCameraBtn" disabled>Stop camera</button>
-        <button id="runLivenessBtn" disabled>Run liveness check</button>
-        <button id="startHRBtn" disabled>Start HR (experimental)</button>
+        <button id="runLivenessBtn" disabled>Run liveness</button>
+        <button id="startHRBtn" disabled>Start HR</button>
         <button id="stopHRBtn" disabled>Stop HR</button>
         <button id="helpBtn">Help</button>
       </div>
@@ -361,19 +359,18 @@
         <div class="hr-top-row">
           <span>
             <span id="hrQualityDot" class="quality-dot"></span>
-            Heart rate (experimental rPPG):
+            Heart rate (optical rPPG via camera):
           </span>
           <span class="hr-value" id="hrValue">-- bpm</span>
         </div>
         <div class="hr-row">
           <span class="hr-status" id="hrStatus">
-            HR idle. Press "Start HR (experimental)" and stay still ~10–20 seconds.
+            HR idle. Press "Start HR" and stay still ~10–20 seconds.
           </span>
         </div>
         <div class="hr-debug" id="hrDebug"></div>
         <p class="hr-warning">
-          This heart-rate function uses experimental camera-based photoplethysmography (rPPG).
-          It is not a medical device and must not be used for diagnosis or treatment decisions.
+          Optical HR via camera is not a medical device. It must not be used for diagnosis or treatment.
         </p>
       </div>
 
@@ -420,20 +417,20 @@
 
     <!-- Short description card -->
     <section class="info-card">
-      <h2>What this tool does</h2>
+      <h2>Productive, local-only encounter tool</h2>
       <p>
-        This is a <strong>productive, local-only encounter tool</strong> combining:
+        This tool combines:
       </p>
       <ul style="margin-left:1.1rem; margin-top:0.3rem;">
-        <li>Camera-based liveness sequence (head movements)</li>
-        <li>Experimental heart-rate estimation (rPPG) from the face</li>
-        <li>Structured logging for compliance (JSON, local storage)</li>
+        <li>Structured liveness check (guided head movements)</li>
+        <li>Camera-based optical heart rate estimation (rPPG)</li>
+        <li>Local JSON logging for integration into your own backend</li>
       </ul>
       <div class="compliance-badge">
         <p>
-          <strong>Local-only:</strong> All processing happens <strong>inside the browser</strong>.
-          No video, no audio, no biometrics and no logs are sent to any cloud service in this demo.
-          JSON export is under the <strong>full control of the issuing professional / institution</strong>.
+          <strong>Local-only:</strong> All calculations run inside the browser. No video, audio or logs are
+          automatically sent to any cloud. JSON export is under the full control of the issuing professional
+          or institution.
         </p>
       </div>
     </section>
@@ -448,35 +445,36 @@
       <div class="collapsible-body collapsed" id="governanceBody">
         <h3>1. Purpose & Scope</h3>
         <p>
-          This module provides a structured <strong>challenge–response liveness check</strong> and an
-          optional experimental HR (rPPG) signal. It is intended for:
+          This module provides a structured liveness check and a camera-based optical HR signal for
+          remote encounters. It is designed for:
         </p>
         <ul>
           <li>Insurance payors and risk managers</li>
-          <li>Health regulators and data-protection bodies</li>
+          <li>Health regulators and data-protection authorities</li>
           <li>Hospital / clinic administrators</li>
           <li>Executive boards and compliance officers</li>
           <li>Patient advocates and safety officers</li>
         </ul>
         <p>
-          The goal is to reduce impersonation and basic deepfake misuse in remote encounters, while
-          keeping processing <strong>local and controllable</strong> for compliance.
+          The goal is to reduce impersonation and basic deepfake misuse in remote encounters, with
+          processing kept local and under institutional control.
         </p>
         <h3>2. Architecture</h3>
         <ul>
           <li>Runs in the browser on the client device</li>
-          <li>No cloud calls required for core functionality</li>
-          <li>JSON logs are exported explicitly by the user</li>
+          <li>No external API calls required for liveness or HR</li>
+          <li>JSON logs are exported explicitly by the user and can be ingested by backend systems</li>
         </ul>
         <h3>3. Limitations</h3>
         <ul>
           <li>Not a certified medical device</li>
           <li>Not a complete identity or fraud-prevention solution</li>
-          <li>HR via rPPG is experimental only</li>
+          <li>Optical HR is for monitoring and logging only, not for diagnosis</li>
         </ul>
         <p class="governance-footnote">
-          The module is designed to be embedded into existing compliant workflows, where the
-          institution controls storage, retention, and audit trails according to their policies.
+          This module is intended to be embedded into existing compliant workflows, where the
+          institution controls storage, retention, and audit trails according to internal policies and
+          applicable law.
         </p>
       </div>
     </section>
@@ -486,32 +484,32 @@
   <div id="helpModal" class="modal hidden">
     <div class="modal-content">
       <button id="closeHelpBtn" class="close-btn">×</button>
-      <h2>User Help – Encounter Liveness & HR (rPPG)</h2>
-      <h3>1. Purpose</h3>
-      <p>
-        Confirm that a live human is in front of the camera and optionally estimate heart rate
-        from subtle color changes in the face (rPPG), and log the encounter locally.
-      </p>
-      <h3>2. How to use</h3>
+      <h2>User Help – Encounter Liveness & Optical HR</h2>
+      <h3>1. Workflow</h3>
       <ol>
         <li>Click “Start camera” and allow access.</li>
-        <li>Position your face in the center, with even lighting.</li>
-        <li>Click “Run liveness check” and follow instructions (optional).</li>
-        <li>Click “Start HR (experimental)” and remain still for 10–20 seconds.</li>
-        <li>Fill in your name, licence number, and issuing authority.</li>
+        <li>Center your face in the frame with even lighting.</li>
+        <li>Click “Run liveness” and follow the on-screen instructions (optional).</li>
+        <li>Click “Start HR” and remain still for 10–20 seconds.</li>
+        <li>Fill in your name, licence number and issuing authority.</li>
         <li>Click “Save local” and/or “Export JSON” for your records.</li>
         <li>Click “Stop HR” and “Stop camera” when finished.</li>
       </ol>
-      <h3>3. Privacy & compliance</h3>
+      <h3>2. Signal quality</h3>
       <ul>
-        <li>All processing is done locally in your browser in this demo.</li>
-        <li>No automatic upload of images, video, audio, or logs.</li>
-        <li>JSON export is explicit and under your control.</li>
+        <li>Green dot: signal usable (HR detected in a plausible range).</li>
+        <li>Red dot: signal weak/noisy – improve lighting and stability.</li>
       </ul>
-      <h3>4. Disclaimer</h3>
+      <h3>3. Privacy</h3>
+      <ul>
+        <li>Processing runs inside the browser.</li>
+        <li>No automatic upload of images, video, audio or logs.</li>
+        <li>JSON export is a deliberate action by the user.</li>
+      </ul>
+      <h3>4. Safety</h3>
       <p>
-        The HR feature is experimental and not a medical device. It must not be used to make
-        clinical decisions or emergency assessments.
+        Optical HR is not suitable for diagnosis, emergency decisions or therapy planning. Use it as an
+        auxiliary signal only.
       </p>
     </div>
   </div>
@@ -559,8 +557,8 @@
     let livenessDurationSec = null;
 
     // HR constants
-    const HR_MIN_BPM = 42;
-    const HR_MAX_BPM = 180;
+    const HR_MIN_BPM = 45;
+    const HR_MAX_BPM = 160;
     const HR_SAMPLE_INTERVAL_MS = 80;
     const HR_MIN_WINDOW_SEC = 8;
     const HR_MAX_WINDOW_SEC = 25;
@@ -700,9 +698,10 @@
       hrValueEl.textContent = "-- bpm";
       hrStatusEl.textContent = "Collecting signal… stay still, 8–15 seconds.";
       hrQualityDot.className = "quality-dot";
-      hrDebugEl.textContent = faceDetector
-        ? "Face detection active (ROI follows face)."
-        : "No FaceDetector support – using central ROI.";
+      hrDebugEl.textContent = (faceDetector
+        ? "Face detection active (ROI follows face).\n"
+        : "No FaceDetector support – using central ROI.\n") +
+        "Debug will show samples, duration and raw vs clamped BPM.";
 
       startHRBtn.disabled = true;
       stopHRBtn.disabled = false;
@@ -728,7 +727,6 @@
       const w = video.videoWidth;
       const h = video.videoHeight;
 
-      // Face-based ROI if possible
       let roiX, roiY, roiWidth, roiHeight;
       let usedFace = false;
 
@@ -739,7 +737,7 @@
             lastFaceBox = faces[0].boundingBox;
           }
         } catch (e) {
-          // ignore, fallback below
+          // ignore, fallback
         }
       }
 
@@ -759,7 +757,6 @@
 
       hrCanvas.width = roiWidth;
       hrCanvas.height = roiHeight;
-
       hrCtx.drawImage(video, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
       const frame = hrCtx.getImageData(0, 0, roiWidth, roiHeight).data;
 
@@ -795,18 +792,23 @@
       if (duration >= HR_MIN_WINDOW_SEC) {
         const hrEstimate = estimateHeartRateFromSignal(hrSignal, hrTimestamps);
         if (hrEstimate && hrEstimate.quality > 0.2) {
-          hrValueEl.textContent = Math.round(hrEstimate.bpm) + " bpm";
+          const rawBpm = hrEstimate.rawBpm;
+          const clampedBpm = hrEstimate.bpm;
+          hrValueEl.textContent = Math.round(clampedBpm) + " bpm";
           hrStatusEl.textContent =
-            "Stable estimate (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
+            "HR estimated (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
           hrQualityDot.className = "quality-dot green";
           lastHREstimate = {
-            bpm: hrEstimate.bpm,
+            bpm: clampedBpm,
             quality: hrEstimate.quality,
             durationSec: duration
           };
+          hrDebugEl.textContent +=
+            "\nRaw BPM: " + rawBpm.toFixed(1) +
+            " | Clamped BPM: " + clampedBpm.toFixed(1);
         } else {
           hrStatusEl.textContent =
-            "Signal weak/noisy. Try better lighting and stay very still.";
+            "Signal weak/noisy. Improve lighting and stay very still.";
           hrQualityDot.className = "quality-dot red";
         }
       } else {
@@ -850,19 +852,24 @@
           im += x[n] * Math.sin(angle);
         }
         const amp = Math.sqrt(re * re + im * im);
-        totalAmp += amp;
+        totalAmp += Math.max(amp, 0);
         if (amp > bestAmp) {
           bestAmp = amp;
-          bestFreq = freq;
+          bestFreq = Math.abs(freq); // ensure positive
         }
       }
 
       if (!bestFreq || bestAmp <= 0 || totalAmp <= 0) return null;
 
-      const bpm = bestFreq * 60;
+      const rawBpm = bestFreq * 60;
+      let bpm = rawBpm;
+
+      if (!isFinite(bpm) || bpm <= 0) return null;
+      bpm = Math.max(HR_MIN_BPM, Math.min(HR_MAX_BPM, bpm));
+
       const quality = bestAmp / totalAmp;
 
-      return { bpm, quality };
+      return { bpm, rawBpm, quality };
     }
 
     /* ---------- LOGGING & JSON ---------- */
