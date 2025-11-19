@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Encounter Liveness & Anti-Deepfake Tool + (rPPG)</title>
+  <title>Encounter Liveness & Anti-Deepfake + Experimental HR (rPPG)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
     body {
       min-height: 100vh;
@@ -24,17 +28,27 @@
       border-bottom: 1px solid #262c4a;
     }
 
-    .app-header h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
-    .app-header p { font-size: 0.95rem; opacity: 0.85; }
+    .app-header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .app-header p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
 
     .app-main {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
       padding: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    .camera-card, .info-card {
+    .camera-card,
+    .info-card {
       background: #151a30;
       border-radius: 1rem;
       padding: 1.25rem;
@@ -47,16 +61,24 @@
       border-radius: 0.75rem;
       overflow: hidden;
       background:#000;
-      max-width:480px;
-      margin:auto;
+      max-width:640px;
+      margin: 0 auto;
     }
 
-    video { width:100%; display:block; transform: scale(1.02); }
+    video {
+      width:100%;
+      display:block;
+      object-fit: cover;
+      transform: scale(1.2); /* digital zoom */
+    }
 
     .overlay {
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       background:rgba(0,0,0,0.45);
-      display:flex; justify-content:center; align-items:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
     }
 
     .overlay span {
@@ -89,7 +111,11 @@
       transition:0.1s ease all;
     }
 
-    button:disabled { opacity:0.5; cursor:default; }
+    button:disabled {
+      opacity:0.5;
+      cursor:default;
+    }
+
     button:not(:disabled):hover {
       transform: translateY(-1px);
       box-shadow:0 4px 10px rgba(36,107,253,0.6);
@@ -103,7 +129,11 @@
       font-size:0.9rem;
     }
 
-    .status-row { display:flex; justify-content:space-between; margin-bottom:0.4rem; }
+    .status-row {
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:0.4rem;
+    }
 
     progress {
       width:100%;
@@ -132,11 +162,90 @@
       border-top:1px solid #262c4a;
       font-size:0.9rem;
     }
-    .hr-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem; }
+
+    .hr-top-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.2rem;
+      gap:0.5rem;
+    }
+
+    .hr-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.2rem;
+      gap:0.5rem;
+    }
+
     .hr-value { font-weight:bold; font-size:1rem; }
+
     .hr-status { font-size:0.8rem; opacity:0.9; }
     .hr-debug { font-size:0.75rem; opacity:0.7; margin-top:0.1rem; }
     .hr-warning { font-size:0.75rem; opacity:0.7; margin-top:0.25rem; }
+
+    .quality-dot {
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      display:inline-block;
+      margin-right:0.4rem;
+      background:#555;
+      border:1px solid #222;
+    }
+    .quality-dot.green { background:#24d18f; }
+    .quality-dot.red { background:#ff4d4d; }
+
+    /* Form block */
+
+    .meta-form {
+      margin-top:0.9rem;
+      padding-top:0.7rem;
+      border-top:1px solid #262c4a;
+      font-size:0.9rem;
+    }
+
+    .meta-row {
+      display:flex;
+      gap:0.75rem;
+      margin-bottom:0.4rem;
+      flex-wrap:wrap;
+    }
+
+    .meta-field {
+      flex:1 1 180px;
+      display:flex;
+      flex-direction:column;
+      gap:0.2rem;
+    }
+
+    .meta-field label {
+      font-size:0.8rem;
+      opacity:0.85;
+    }
+
+    .meta-field input {
+      border-radius:0.5rem;
+      border:1px solid #262c4a;
+      padding:0.3rem 0.5rem;
+      background:#101429;
+      color:#f5f5f5;
+      font-size:0.85rem;
+    }
+
+    .meta-actions {
+      display:flex;
+      gap:0.5rem;
+      flex-wrap:wrap;
+      margin-top:0.4rem;
+      align-items:center;
+    }
+
+    .log-status {
+      font-size:0.8rem;
+      opacity:0.8;
+    }
 
     /* Governance collapsible */
     .governance-card { padding:0; overflow:hidden; }
@@ -194,11 +303,6 @@
       line-height:28px; text-align:center;
     }
 
-    @media (min-width: 900px) {
-      .app-main { flex-direction:row; align-items:flex-start; }
-      .camera-card, .info-card { flex:1; }
-    }
-
     @media print {
       body { background:#ffffff; color:#000000; }
       .app-header, .camera-card, .info-card {
@@ -212,7 +316,7 @@
 <body>
   <header class="app-header">
     <h1>Encounter Liveness Check</h1>
-    <p>Encounter Liveness & Anti-Deepfake Tool + (rPPG).</p>
+    <p>Centered camera view, face-tracking ROI & experimental rPPG heart rate.</p>
   </header>
 
   <main class="app-main">
@@ -246,26 +350,54 @@
       </div>
 
       <div class="hr-block">
-        <div class="hr-row">
-          <span>Heart rate (experimental rPPG):</span>
+        <div class="hr-top-row">
+          <span>
+            <span id="hrQualityDot" class="quality-dot"></span>
+            Heart rate (experimental rPPG):
+          </span>
           <span class="hr-value" id="hrValue">-- bpm</span>
         </div>
         <div class="hr-row">
           <span class="hr-status" id="hrStatus">
-            HR idle. Press "Start HR " and stay still ~10–20 seconds.
+            HR idle. Press "Start HR (experimental)" and stay still ~10–20 seconds.
           </span>
         </div>
         <div class="hr-debug" id="hrDebug"></div>
         <p class="hr-warning">
-          This heart-rate function uses camera-based photoplethysmography (rPPG).
+          This heart-rate function uses experimental camera-based photoplethysmography (rPPG).
           It is not a medical device and must not be used for diagnosis or treatment decisions.
         </p>
+      </div>
+
+      <!-- Meta data + logging -->
+      <div class="meta-form">
+        <div class="meta-row">
+          <div class="meta-field">
+            <label for="profName">Name of issuing professional</label>
+            <input id="profName" type="text" placeholder="e.g. Dr. Jane Doe" />
+          </div>
+          <div class="meta-field">
+            <label for="profLicense">Professional licence number</label>
+            <input id="profLicense" type="text" placeholder="e.g. PT-123456" />
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-field">
+            <label for="issuingAuthority">Issuing authority / organization</label>
+            <input id="issuingAuthority" type="text" placeholder="e.g. State Medical Board, Clinic, Insurer" />
+          </div>
+        </div>
+        <div class="meta-actions">
+          <button id="saveLocalBtn" type="button">Save local</button>
+          <button id="exportBtn" type="button">Export JSON</button>
+          <span class="log-status" id="logStatus">No logs saved yet.</span>
+        </div>
       </div>
 
       <div class="disclaimer">
         <p>
           Liveness & rPPG layer provided by
-          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (MOSTISCHMIDBAUER@WEB.DE WWW.VIRTUALCARESOLUTION.DE).
+          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (C&C Investments & Trade LLC).
         </p>
         <p>
           Use only within your organization’s security and data-protection policies; no guarantee of
@@ -279,8 +411,9 @@
       <h2>What this app does</h2>
       <p>
         This app runs a short liveness sequence (head-movement tasks) and offers an experimental
-        camera-based heart rate estimate using remote photoplethysmography (rPPG). All processing
-        runs locally in your browser in this demo.
+        camera-based heart rate estimate using remote photoplethysmography (rPPG). A face detector,
+        where supported, is used to track the face so the signal ROI follows the subject, with
+        digital zoom to emphasize eye contact.
       </p>
     </section>
 
@@ -331,8 +464,10 @@
         <ul>
           <li>Uses <code>getUserMedia</code> for camera access</li>
           <li>Liveness: scripted prompts (look straight → left → right → nod)</li>
-          <li>HR (rPPG): frame sampling of a small facial region, green-channel intensity over time</li>
-          <li>Simple frequency analysis to estimate dominant heart-rate band</li>
+          <li>
+            HR (rPPG): face-tracking where supported (Shape Detection API), with a small green-channel ROI
+            on the upper face, plus simple frequency analysis to estimate the dominant heart-rate band.
+          </li>
           <li>No biometric templates are created in this demo</li>
         </ul>
         <h3>5. Stakeholder Risk Controls</h3>
@@ -370,10 +505,11 @@
       <h3>2. How to use</h3>
       <ol>
         <li>Click “Start camera” and allow access.</li>
-        <li>Position your face with good, even lighting.</li>
+        <li>Position your face in the center, with good, even lighting.</li>
         <li>Click “Run liveness check” and follow instructions (optional).</li>
         <li>Click “Start HR (experimental)” and remain still for 10–20 seconds.</li>
-        <li>Read the HR value once status indicates a stable estimate.</li>
+        <li>Read the HR value and signal quality indicator.</li>
+        <li>Click “Save local” and/or “Export JSON” to keep the log.</li>
         <li>Click “Stop HR” and “Stop camera” when finished.</li>
       </ol>
       <h3>3. Tips for better HR readings</h3>
@@ -414,10 +550,23 @@
     const hrValueEl = document.getElementById("hrValue");
     const hrStatusEl = document.getElementById("hrStatus");
     const hrDebugEl = document.getElementById("hrDebug");
+    const hrQualityDot = document.getElementById("hrQualityDot");
+
+    const profNameInput = document.getElementById("profName");
+    const profLicenseInput = document.getElementById("profLicense");
+    const issuingAuthorityInput = document.getElementById("issuingAuthority");
+    const saveLocalBtn = document.getElementById("saveLocalBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const logStatusEl = document.getElementById("logStatus");
 
     const governanceToggle = document.getElementById("governanceToggle");
     const governanceBody = document.getElementById("governanceBody");
     const governanceChevron = document.getElementById("governanceChevron");
+
+    // Liveness tracking for logs
+    let livenessCompleted = false;
+    let livenessStartTime = null;
+    let livenessDurationSec = null;
 
     function setStatus(text) {
       if (statusText) statusText.textContent = text;
@@ -480,6 +629,9 @@
     function runLiveness() {
       if (!stream || livenessRunning) return;
       livenessRunning = true;
+      livenessCompleted = false;
+      livenessDurationSec = null;
+      livenessStartTime = performance.now() / 1000;
 
       const steps = [
         { text: "Look straight into the camera", percent: 25 },
@@ -499,6 +651,10 @@
           stopLiveness();
           progressBar.value = 100;
           setStatus("Liveness finished – review required.");
+          livenessCompleted = true;
+          if (livenessStartTime != null) {
+            livenessDurationSec = (performance.now() / 1000) - livenessStartTime;
+          }
           return;
         }
         showOverlay(steps[index].text);
@@ -506,12 +662,12 @@
       }, 2500);
     }
 
-    /* Experimental HR (rPPG) */
+    /* Experimental HR (rPPG) with face-detection ROI */
 
     const HR_MIN_BPM = 42;
     const HR_MAX_BPM = 180;
     const HR_SAMPLE_INTERVAL_MS = 80; // ~12.5 Hz
-    const HR_MIN_WINDOW_SEC = 8;      // make it easier: 8 seconds window
+    const HR_MIN_WINDOW_SEC = 8;
 
     let hrTimer = null;
     let hrSignal = [];
@@ -519,9 +675,23 @@
     const hrCanvas = document.createElement("canvas");
     const hrCtx = hrCanvas.getContext("2d");
 
+    let faceDetector = null;
+    let lastFaceBox = null;
+
+    if ("FaceDetector" in window) {
+      try {
+        faceDetector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+      } catch (e) {
+        faceDetector = null;
+      }
+    }
+
+    let lastHREstimate = null; // { bpm, quality, durationSec }
+
     function resetHRBuffers() {
       hrSignal = [];
       hrTimestamps = [];
+      lastHREstimate = null;
     }
 
     function startHRMonitoring() {
@@ -534,7 +704,10 @@
       resetHRBuffers();
       hrValueEl.textContent = "-- bpm";
       hrStatusEl.textContent = "Collecting signal… stay still, 8–15 seconds.";
-      hrDebugEl.textContent = "";
+      hrDebugEl.textContent = faceDetector
+        ? "Face detection active (ROI follows face)."
+        : "No FaceDetector support – using central ROI.";
+      hrQualityDot.className = "quality-dot";
       startHRBtn.disabled = true;
       stopHRBtn.disabled = false;
 
@@ -548,20 +721,47 @@
       }
       hrStatusEl.textContent = "HR idle. Press Start HR again to re-measure.";
       hrDebugEl.textContent = "";
+      hrQualityDot.className = "quality-dot";
       startHRBtn.disabled = !stream;
       stopHRBtn.disabled = true;
     }
 
-    function sampleHRFrame() {
+    async function sampleHRFrame() {
       if (!video || video.videoWidth === 0 || video.videoHeight === 0) return;
 
       const w = video.videoWidth;
       const h = video.videoHeight;
 
-      const roiWidth = Math.floor(w * 0.2);
-      const roiHeight = Math.floor(h * 0.15);
-      const roiX = Math.floor(w * 0.4);
-      const roiY = Math.floor(h * 0.2);
+      // Face-based ROI if possible
+      let roiX, roiY, roiWidth, roiHeight;
+      let usedFace = false;
+
+      if (faceDetector) {
+        try {
+          const faces = await faceDetector.detect(video);
+          if (faces && faces.length > 0) {
+            const box = faces[0].boundingBox;
+            lastFaceBox = box;
+          }
+        } catch (e) {
+          // ignore face detection errors, fallback below
+        }
+      }
+
+      if (lastFaceBox) {
+        const box = lastFaceBox;
+        roiX = Math.max(0, box.x + box.width * 0.25);
+        roiWidth = Math.min(w - roiX, box.width * 0.5);
+        roiY = Math.max(0, box.y);
+        roiHeight = Math.min(h - roiY, box.height * 0.35);
+        usedFace = true;
+      } else {
+        // center ROI fallback
+        roiWidth = Math.floor(w * 0.2);
+        roiHeight = Math.floor(h * 0.15);
+        roiX = Math.floor(w * 0.4);
+        roiY = Math.floor(h * 0.2);
+      }
 
       hrCanvas.width = roiWidth;
       hrCanvas.height = roiHeight;
@@ -594,7 +794,9 @@
         ? (hrTimestamps[hrTimestamps.length - 1] - hrTimestamps[0])
         : 0;
 
-      hrDebugEl.textContent = "Samples: " + hrSignal.length +
+      hrDebugEl.textContent =
+        "ROI: " + (usedFace ? "face-based" : "center") +
+        " | Samples: " + hrSignal.length +
         " | Duration: " + duration.toFixed(1) + " s";
 
       if (duration >= HR_MIN_WINDOW_SEC) {
@@ -603,15 +805,25 @@
           hrValueEl.textContent = Math.round(hrEstimate.bpm) + " bpm";
           hrStatusEl.textContent =
             "Stable estimate (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
+          hrQualityDot.className = "quality-dot green";
+          lastHREstimate = {
+            bpm: hrEstimate.bpm,
+            quality: hrEstimate.quality,
+            durationSec: duration
+          };
         } else {
           hrStatusEl.textContent =
             "Signal weak/noisy. Try better lighting and stay very still.";
+          hrQualityDot.className = "quality-dot red";
         }
       } else {
         hrStatusEl.textContent =
           "Collecting signal (" + duration.toFixed(1) + " s)… hold still, good light.";
       }
     }
+
+    const HR_MIN_BPM = 42;
+    const HR_MAX_BPM = 180;
 
     function estimateHeartRateFromSignal(signal, timestamps) {
       const N = signal.length;
@@ -663,6 +875,63 @@
       return { bpm, quality };
     }
 
+    /* Logging & JSON export */
+
+    function buildCurrentSummary() {
+      return {
+        timestamp: new Date().toISOString(),
+        professionalName: profNameInput.value || null,
+        professionalLicense: profLicenseInput.value || null,
+        issuingAuthority: issuingAuthorityInput.value || null,
+        livenessCompleted: livenessCompleted,
+        livenessDurationSec: livenessDurationSec,
+        hrBpm: lastHREstimate ? lastHREstimate.bpm : null,
+        hrQuality: lastHREstimate ? lastHREstimate.quality : null,
+        hrDurationSec: lastHREstimate ? lastHREstimate.durationSec : null
+      };
+    }
+
+    function saveLocalSummary() {
+      const summary = buildCurrentSummary();
+      let arr = [];
+      try {
+        const existing = localStorage.getItem("livenessHrLogs");
+        if (existing) arr = JSON.parse(existing);
+      } catch (e) {
+        arr = [];
+      }
+      arr.push(summary);
+      try {
+        localStorage.setItem("livenessHrLogs", JSON.stringify(arr));
+        logStatusEl.textContent = "Saved locally (" + arr.length + " record(s)).";
+      } catch (e) {
+        logStatusEl.textContent = "Could not save to localStorage (maybe disabled).";
+      }
+    }
+
+    function exportSummaries() {
+      let arr = [];
+      try {
+        const existing = localStorage.getItem("livenessHrLogs");
+        if (existing) arr = JSON.parse(existing);
+      } catch (e) {
+        arr = [];
+      }
+      if (arr.length === 0) {
+        arr.push(buildCurrentSummary());
+      }
+      const blob = new Blob([JSON.stringify(arr, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "liveness_hr_logs.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      logStatusEl.textContent = "Exported " + arr.length + " record(s) as JSON.";
+    }
+
     /* Events */
 
     startCameraBtn.addEventListener("click", startCamera);
@@ -695,7 +964,9 @@
         governanceChevron.classList.remove("rotated");
       }
     });
+
+    saveLocalBtn.addEventListener("click", saveLocalSummary);
+    exportBtn.addEventListener("click", exportSummaries);
   </script>
 </body>
 </html>
-
