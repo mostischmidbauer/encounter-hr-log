@@ -538,7 +538,7 @@
     const governanceChevron = document.getElementById("governanceChevron");
 
     function setStatus(text) {
-      statusText.textContent = text;
+      if (statusText) statusText.textContent = text;
     }
 
     async function startCamera() {
@@ -547,11 +547,11 @@
           video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         });
-        video.srcObject = stream;
+        if (video) video.srcObject = stream;
         setStatus("Camera running");
-        startCameraBtn.disabled = true;
-        stopCameraBtn.disabled = false;
-        runLivenessBtn.disabled = false;
+        if (startCameraBtn) startCameraBtn.disabled = true;
+        if (stopCameraBtn) stopCameraBtn.disabled = false;
+        if (runLivenessBtn) runLivenessBtn.disabled = false;
       } catch (err) {
         console.error(err);
         setStatus("Cannot access camera");
@@ -563,27 +563,29 @@
         stream.getTracks().forEach(t => t.stop());
         stream = null;
       }
-      video.srcObject = null;
-      startCameraBtn.disabled = false;
-      stopCameraBtn.disabled = true;
-      runLivenessBtn.disabled = true;
+      if (video) video.srcObject = null;
+      if (startCameraBtn) startCameraBtn.disabled = false;
+      if (stopCameraBtn) stopCameraBtn.disabled = true;
+      if (runLivenessBtn) runLivenessBtn.disabled = true;
       setStatus("Camera stopped");
       stopLiveness();
     }
 
     function showOverlay(msg) {
+      if (!overlay || !overlayText) return;
       overlayText.textContent = msg;
       overlay.classList.remove("hidden");
     }
 
     function hideOverlay() {
+      if (!overlay) return;
       overlay.classList.add("hidden");
     }
 
     function stopLiveness() {
       livenessRunning = false;
       if (progressInterval) clearInterval(progressInterval);
-      progressBar.value = 0;
+      if (progressBar) progressBar.value = 0;
       hideOverlay();
     }
 
@@ -600,54 +602,58 @@
 
       let index = 0;
       showOverlay(steps[index].text);
-      progressBar.value = steps[index].percent;
+      if (progressBar) progressBar.value = steps[index].percent;
       setStatus("Liveness running…");
 
       progressInterval = setInterval(() => {
         index++;
         if (index >= steps.length) {
           stopLiveness();
-          progressBar.value = 100;
+          if (progressBar) progressBar.value = 100;
           setStatus("Liveness finished – review required.");
           return;
         }
         showOverlay(steps[index].text);
-        progressBar.value = steps[index].percent;
+        if (progressBar) progressBar.value = steps[index].percent;
       }, 2500);
     }
 
-    // Button events
-    startCameraBtn.addEventListener("click", startCamera);
-    stopCameraBtn.addEventListener("click", stopCamera);
-    runLivenessBtn.addEventListener("click", runLiveness);
+    // Attach event listeners only if elements exist
 
-    // Help modal
-    helpBtn.addEventListener("click", () => {
-      helpModal.classList.remove("hidden");
-    });
+    if (startCameraBtn) startCameraBtn.addEventListener("click", startCamera);
+    if (stopCameraBtn) stopCameraBtn.addEventListener("click", stopCamera);
+    if (runLivenessBtn) runLivenessBtn.addEventListener("click", runLiveness);
 
-    closeHelpBtn.addEventListener("click", () => {
-      helpModal.classList.add("hidden");
-    });
+    if (helpBtn && helpModal) {
+      helpBtn.addEventListener("click", () => {
+        helpModal.classList.remove("hidden");
+      });
+    }
 
-    helpModal.addEventListener("click", (e) => {
-      if (e.target === helpModal) {
+    if (closeHelpBtn && helpModal) {
+      closeHelpBtn.addEventListener("click", () => {
         helpModal.classList.add("hidden");
-      }
-    });
+      });
 
-    // Governance collapsible
-    governanceToggle.addEventListener("click", () => {
-      const collapsed = governanceBody.classList.contains("collapsed");
-      if (collapsed) {
-        governanceBody.classList.remove("collapsed");
-        governanceChevron.classList.add("rotated");
-      } else {
-        governanceBody.classList.add("collapsed");
-        governanceChevron.classList.remove("rotated");
-      }
-    });
+      helpModal.addEventListener("click", (e) => {
+        if (e.target === helpModal) {
+          helpModal.classList.add("hidden");
+        }
+      });
+    }
+
+    if (governanceToggle && governanceBody && governanceChevron) {
+      governanceToggle.addEventListener("click", () => {
+        const collapsed = governanceBody.classList.contains("collapsed");
+        if (collapsed) {
+          governanceBody.classList.remove("collapsed");
+          governanceChevron.classList.add("rotated");
+        } else {
+          governanceBody.classList.add("collapsed");
+          governanceChevron.classList.remove("rotated");
+        }
+      });
+    }
   </script>
 </body>
 </html>
-
