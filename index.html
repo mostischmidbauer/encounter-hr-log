@@ -69,7 +69,7 @@
       width:100%;
       display:block;
       object-fit: cover;
-      transform: scale(1.2); /* digital zoom */
+      transform: scale(1.2); /* digital zoom for eye contact */
     }
 
     .overlay {
@@ -180,7 +180,6 @@
     }
 
     .hr-value { font-weight:bold; font-size:1rem; }
-
     .hr-status { font-size:0.8rem; opacity:0.9; }
     .hr-debug { font-size:0.75rem; opacity:0.7; margin-top:0.1rem; }
     .hr-warning { font-size:0.75rem; opacity:0.7; margin-top:0.25rem; }
@@ -198,7 +197,6 @@
     .quality-dot.red { background:#ff4d4d; }
 
     /* Form block */
-
     .meta-form {
       margin-top:0.9rem;
       padding-top:0.7rem;
@@ -246,6 +244,16 @@
       font-size:0.8rem;
       opacity:0.8;
     }
+
+    /* Local-only / compliance badge */
+    .compliance-badge {
+      margin-top:0.75rem;
+      font-size:0.8rem;
+      opacity:0.9;
+      border-top:1px solid #262c4a;
+      padding-top:0.5rem;
+    }
+    .compliance-badge strong { color:#24d18f; }
 
     /* Governance collapsible */
     .governance-card { padding:0; overflow:hidden; }
@@ -316,7 +324,7 @@
 <body>
   <header class="app-header">
     <h1>Encounter Liveness Check</h1>
-    <p>Centered camera view, face-tracking ROI & experimental rPPG heart rate.</p>
+    <p>Centered camera view, local-only processing, compliance-ready logging.</p>
   </header>
 
   <main class="app-main">
@@ -374,7 +382,7 @@
         <div class="meta-row">
           <div class="meta-field">
             <label for="profName">Name of issuing professional</label>
-            <input id="profName" type="text" placeholder="e.g. Dr. Jane Doe" />
+            <input id="profName" type="text" placeholder="e.g. Moustafa Mohammed Elsayed Elsayed Ali" />
           </div>
           <div class="meta-field">
             <label for="profLicense">Professional licence number</label>
@@ -384,20 +392,24 @@
         <div class="meta-row">
           <div class="meta-field">
             <label for="issuingAuthority">Issuing authority / organization</label>
-            <input id="issuingAuthority" type="text" placeholder="e.g. State Medical Board, Clinic, Insurer" />
+            <input id="issuingAuthority" type="text" placeholder="e.g. Klinik Rosenhof / Sahara Insurance / etc." />
           </div>
         </div>
         <div class="meta-actions">
-          <button id="saveLocalBtn" type="button">Save local</button>
+          <button id="saveLocalBtn" type="button">Save local (device)</button>
           <button id="exportBtn" type="button">Export JSON</button>
-          <span class="log-status" id="logStatus">No logs saved yet.</span>
+          <span class="log-status" id="logStatus">No logs saved yet (local-only).</span>
         </div>
       </div>
 
       <div class="disclaimer">
         <p>
-          Liveness & rPPG layer provided by
-          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (C&C Investments & Trade LLC).
+          Developed and provided by
+          <strong>Mr. Moustafa Mohammed Elsayed Elsayed Ali</strong><br/>
+          Kronwittener Straße 1, 84367 Tann, Germany<br/>
+          E-Mail: <a href="mailto:mostischmidbauer@web.de" style="color:#24d18f;">mostischmidbauer@web.de</a>,
+          <a href="mailto:agentic@virtualcaresolution.de" style="color:#24d18f;">agentic@virtualcaresolution.de</a><br/>
+          Tel: +49 1522 5321568
         </p>
         <p>
           Use only within your organization’s security and data-protection policies; no guarantee of
@@ -408,13 +420,22 @@
 
     <!-- Short description card -->
     <section class="info-card">
-      <h2>What this app does</h2>
+      <h2>What this tool does</h2>
       <p>
-        This app runs a short liveness sequence (head-movement tasks) and offers an experimental
-        camera-based heart rate estimate using remote photoplethysmography (rPPG). A face detector,
-        where supported, is used to track the face so the signal ROI follows the subject, with
-        digital zoom to emphasize eye contact.
+        This is a <strong>productive, local-only encounter tool</strong> combining:
       </p>
+      <ul style="margin-left:1.1rem; margin-top:0.3rem;">
+        <li>Camera-based liveness sequence (head movements)</li>
+        <li>Experimental heart-rate estimation (rPPG) from the face</li>
+        <li>Structured logging for compliance (JSON, local storage)</li>
+      </ul>
+      <div class="compliance-badge">
+        <p>
+          <strong>Local-only:</strong> All processing happens <strong>inside the browser</strong>.
+          No video, no audio, no biometrics and no logs are sent to any cloud service in this demo.
+          JSON export is under the <strong>full control of the issuing professional / institution</strong>.
+        </p>
+      </div>
     </section>
 
     <!-- Governance Stakeholder Panel -->
@@ -427,66 +448,35 @@
       <div class="collapsible-body collapsed" id="governanceBody">
         <h3>1. Purpose & Scope</h3>
         <p>
-          This module provides a structured <strong>challenge–response liveness check</strong> for remote
-          encounters and an optional experimental HR (rPPG) signal. It is designed to protect:
+          This module provides a structured <strong>challenge–response liveness check</strong> and an
+          optional experimental HR (rPPG) signal. It is intended for:
         </p>
         <ul>
-          <li><strong>Payors</strong> (insurance, health funds)</li>
-          <li><strong>Regulators</strong> (health authorities, data-protection bodies)</li>
-          <li><strong>Administrators</strong> (hospitals, clinics, provider networks)</li>
-          <li><strong>Executive Boards</strong> (governance, risk oversight)</li>
-          <li><strong>Patient Advocates</strong> (fairness, integrity, patient safety)</li>
+          <li>Insurance payors and risk managers</li>
+          <li>Health regulators and data-protection bodies</li>
+          <li>Hospital / clinic administrators</li>
+          <li>Executive boards and compliance officers</li>
+          <li>Patient advocates and safety officers</li>
         </ul>
         <p>
-          Primary goal: reduce impersonation, replay attacks, and deepfake misuse in telehealth,
-          claims, consent, and remote documentation workflows. HR (rPPG) is a secondary, optional
-          signal for research and monitoring concepts.
+          The goal is to reduce impersonation and basic deepfake misuse in remote encounters, while
+          keeping processing <strong>local and controllable</strong> for compliance.
         </p>
-        <h3>2. Position in Governance Architecture</h3>
-        <p>This module sits between:</p>
+        <h3>2. Architecture</h3>
         <ul>
-          <li><strong>Identity assurance</strong> (ID documents, patient/provider records)</li>
-          <li><strong>Operational workflow</strong> (EHR, CRM, claims, telehealth platforms)</li>
+          <li>Runs in the browser on the client device</li>
+          <li>No cloud calls required for core functionality</li>
+          <li>JSON logs are exported explicitly by the user</li>
         </ul>
-        <p>
-          Output is interpreted as:
-          <em>“Liveness completed; human-like response detected – requires human or automated review.”</em>
-          HR output is an <strong>experimental signal</strong>, not a clinical vital sign.
-        </p>
-        <h3>3. Privacy & Data Protection</h3>
+        <h3>3. Limitations</h3>
         <ul>
-          <li>Runs 100% locally in the browser (demo implementation)</li>
-          <li>No data is sent, stored, profiled or transmitted by default</li>
-          <li>Can be deployed in GDPR/HIPAA-compliant environments</li>
-          <li>Any storage and logging is controlled by the implementing organization</li>
+          <li>Not a certified medical device</li>
+          <li>Not a complete identity or fraud-prevention solution</li>
+          <li>HR via rPPG is experimental only</li>
         </ul>
-        <h3>4. Technical Characteristics</h3>
-        <ul>
-          <li>Uses <code>getUserMedia</code> for camera access</li>
-          <li>Liveness: scripted prompts (look straight → left → right → nod)</li>
-          <li>
-            HR (rPPG): face-tracking where supported (Shape Detection API), with a small green-channel ROI
-            on the upper face, plus simple frequency analysis to estimate the dominant heart-rate band.
-          </li>
-          <li>No biometric templates are created in this demo</li>
-        </ul>
-        <h3>5. Stakeholder Risk Controls</h3>
-        <ul>
-          <li>Not a full identity, fraud-prevention, or medical monitoring system</li>
-          <li>Reduces exposure to basic deepfake / replay risks</li>
-          <li>HR (rPPG) is strictly experimental and must not be used for diagnosis or triage</li>
-        </ul>
-        <h3>6. Integration Roadmap</h3>
-        <ol>
-          <li>Pilot implementation with a defined user/patient/provider group</li>
-          <li>Add more robust CV-based liveness scoring and rPPG signal quality metrics</li>
-          <li>Log liveness and HR events in secure backend systems (timestamp, device, score)</li>
-          <li>Attach decision rules to thresholds (e.g. score &lt; 60 → manual review)</li>
-          <li>Include this module in internal AI, digital-health, and risk documentation</li>
-        </ol>
         <p class="governance-footnote">
-          This section is written for multidisciplinary governance review across payors, regulators,
-          administrative bodies, executive boards, and patient-advocacy groups.
+          The module is designed to be embedded into existing compliant workflows, where the
+          institution controls storage, retention, and audit trails according to their policies.
         </p>
       </div>
     </section>
@@ -499,28 +489,26 @@
       <h2>User Help – Encounter Liveness & HR (rPPG)</h2>
       <h3>1. Purpose</h3>
       <p>
-        Confirms that the camera is seeing a live human reacting in real time and optionally estimates
-        heart rate from subtle color changes in the face (rPPG).
+        Confirm that a live human is in front of the camera and optionally estimate heart rate
+        from subtle color changes in the face (rPPG), and log the encounter locally.
       </p>
       <h3>2. How to use</h3>
       <ol>
         <li>Click “Start camera” and allow access.</li>
-        <li>Position your face in the center, with good, even lighting.</li>
+        <li>Position your face in the center, with even lighting.</li>
         <li>Click “Run liveness check” and follow instructions (optional).</li>
         <li>Click “Start HR (experimental)” and remain still for 10–20 seconds.</li>
-        <li>Read the HR value and signal quality indicator.</li>
-        <li>Click “Save local” and/or “Export JSON” to keep the log.</li>
+        <li>Fill in your name, licence number, and issuing authority.</li>
+        <li>Click “Save local” and/or “Export JSON” for your records.</li>
         <li>Click “Stop HR” and “Stop camera” when finished.</li>
       </ol>
-      <h3>3. Tips for better HR readings</h3>
+      <h3>3. Privacy & compliance</h3>
       <ul>
-        <li>Use a well-lit room with light in front of your face, not behind you.</li>
-        <li>Keep your head as still as possible (no talking, minimal movement).</li>
-        <li>Avoid strong color changes on the face (colored light, heavy filters).</li>
+        <li>All processing is done locally in your browser in this demo.</li>
+        <li>No automatic upload of images, video, audio, or logs.</li>
+        <li>JSON export is explicit and under your control.</li>
       </ul>
-      <h3>4. Data & privacy</h3>
-      <p>All processing runs locally in your browser in this demo; no video is uploaded.</p>
-      <h3>5. Disclaimer</h3>
+      <h3>4. Disclaimer</h3>
       <p>
         The HR feature is experimental and not a medical device. It must not be used to make
         clinical decisions or emergency assessments.
@@ -529,6 +517,8 @@
   </div>
 
   <script>
+    /* ---------- GLOBAL STATE ---------- */
+
     let stream = null;
     let livenessRunning = false;
     let progressInterval = null;
@@ -563,14 +553,45 @@
     const governanceBody = document.getElementById("governanceBody");
     const governanceChevron = document.getElementById("governanceChevron");
 
-    // Liveness tracking for logs
+    // Liveness log fields
     let livenessCompleted = false;
     let livenessStartTime = null;
     let livenessDurationSec = null;
 
-    function setStatus(text) {
-      if (statusText) statusText.textContent = text;
+    // HR constants
+    const HR_MIN_BPM = 42;
+    const HR_MAX_BPM = 180;
+    const HR_SAMPLE_INTERVAL_MS = 80;
+    const HR_MIN_WINDOW_SEC = 8;
+    const HR_MAX_WINDOW_SEC = 25;
+
+    // HR state
+    let hrTimer = null;
+    let hrSignal = [];
+    let hrTimestamps = [];
+    const hrCanvas = document.createElement("canvas");
+    const hrCtx = hrCanvas.getContext("2d");
+    let lastHREstimate = null;
+
+    // Face detection (optional)
+    let faceDetector = null;
+    let lastFaceBox = null;
+
+    if ("FaceDetector" in window) {
+      try {
+        faceDetector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+      } catch (e) {
+        faceDetector = null;
+      }
     }
+
+    /* ---------- UTILITIES ---------- */
+
+    function setStatus(text) {
+      statusText.textContent = text;
+    }
+
+    /* ---------- CAMERA ---------- */
 
     async function startCamera() {
       try {
@@ -578,7 +599,7 @@
           video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         });
-        if (video) video.srcObject = stream;
+        video.srcObject = stream;
         setStatus("Camera running");
         startCameraBtn.disabled = true;
         stopCameraBtn.disabled = false;
@@ -595,7 +616,7 @@
         stream.getTracks().forEach(t => t.stop());
         stream = null;
       }
-      if (video) video.srcObject = null;
+      video.srcObject = null;
       startCameraBtn.disabled = false;
       stopCameraBtn.disabled = true;
       runLivenessBtn.disabled = true;
@@ -606,23 +627,21 @@
       stopHRMonitoring();
     }
 
-    /* Liveness */
+    /* ---------- LIVENESS ---------- */
 
     function showOverlay(msg) {
-      if (!overlay || !overlayText) return;
       overlayText.textContent = msg;
       overlay.classList.remove("hidden");
     }
 
     function hideOverlay() {
-      if (!overlay) return;
       overlay.classList.add("hidden");
     }
 
     function stopLiveness() {
       livenessRunning = false;
       if (progressInterval) clearInterval(progressInterval);
-      if (progressBar) progressBar.value = 0;
+      progressBar.value = 0;
       hideOverlay();
     }
 
@@ -662,31 +681,7 @@
       }, 2500);
     }
 
-    /* Experimental HR (rPPG) with face-detection ROI */
-
-    const HR_MIN_BPM = 42;
-    const HR_MAX_BPM = 180;
-    const HR_SAMPLE_INTERVAL_MS = 80; // ~12.5 Hz
-    const HR_MIN_WINDOW_SEC = 8;
-
-    let hrTimer = null;
-    let hrSignal = [];
-    let hrTimestamps = [];
-    const hrCanvas = document.createElement("canvas");
-    const hrCtx = hrCanvas.getContext("2d");
-
-    let faceDetector = null;
-    let lastFaceBox = null;
-
-    if ("FaceDetector" in window) {
-      try {
-        faceDetector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
-      } catch (e) {
-        faceDetector = null;
-      }
-    }
-
-    let lastHREstimate = null; // { bpm, quality, durationSec }
+    /* ---------- HR (rPPG) ---------- */
 
     function resetHRBuffers() {
       hrSignal = [];
@@ -704,10 +699,11 @@
       resetHRBuffers();
       hrValueEl.textContent = "-- bpm";
       hrStatusEl.textContent = "Collecting signal… stay still, 8–15 seconds.";
+      hrQualityDot.className = "quality-dot";
       hrDebugEl.textContent = faceDetector
         ? "Face detection active (ROI follows face)."
         : "No FaceDetector support – using central ROI.";
-      hrQualityDot.className = "quality-dot";
+
       startHRBtn.disabled = true;
       stopHRBtn.disabled = false;
 
@@ -740,11 +736,10 @@
         try {
           const faces = await faceDetector.detect(video);
           if (faces && faces.length > 0) {
-            const box = faces[0].boundingBox;
-            lastFaceBox = box;
+            lastFaceBox = faces[0].boundingBox;
           }
         } catch (e) {
-          // ignore face detection errors, fallback below
+          // ignore, fallback below
         }
       }
 
@@ -756,7 +751,6 @@
         roiHeight = Math.min(h - roiY, box.height * 0.35);
         usedFace = true;
       } else {
-        // center ROI fallback
         roiWidth = Math.floor(w * 0.2);
         roiHeight = Math.floor(h * 0.15);
         roiX = Math.floor(w * 0.4);
@@ -784,8 +778,7 @@
       hrSignal.push(avgG);
       hrTimestamps.push(now);
 
-      const maxWindowSec = 25;
-      while (hrTimestamps.length > 0 && (now - hrTimestamps[0]) > maxWindowSec) {
+      while (hrTimestamps.length > 0 && (now - hrTimestamps[0]) > HR_MAX_WINDOW_SEC) {
         hrTimestamps.shift();
         hrSignal.shift();
       }
@@ -821,9 +814,6 @@
           "Collecting signal (" + duration.toFixed(1) + " s)… hold still, good light.";
       }
     }
-
-    const HR_MIN_BPM = 42;
-    const HR_MAX_BPM = 180;
 
     function estimateHeartRateFromSignal(signal, timestamps) {
       const N = signal.length;
@@ -875,7 +865,7 @@
       return { bpm, quality };
     }
 
-    /* Logging & JSON export */
+    /* ---------- LOGGING & JSON ---------- */
 
     function buildCurrentSummary() {
       return {
@@ -895,24 +885,24 @@
       const summary = buildCurrentSummary();
       let arr = [];
       try {
-        const existing = localStorage.getItem("livenessHrLogs");
+        const existing = localStorage.getItem("encounterLivenessHrLogs");
         if (existing) arr = JSON.parse(existing);
       } catch (e) {
         arr = [];
       }
       arr.push(summary);
       try {
-        localStorage.setItem("livenessHrLogs", JSON.stringify(arr));
-        logStatusEl.textContent = "Saved locally (" + arr.length + " record(s)).";
+        localStorage.setItem("encounterLivenessHrLogs", JSON.stringify(arr));
+        logStatusEl.textContent = "Saved locally on this device (" + arr.length + " record(s)).";
       } catch (e) {
-        logStatusEl.textContent = "Could not save to localStorage (maybe disabled).";
+        logStatusEl.textContent = "Could not save to localStorage (browser policy).";
       }
     }
 
     function exportSummaries() {
       let arr = [];
       try {
-        const existing = localStorage.getItem("livenessHrLogs");
+        const existing = localStorage.getItem("encounterLivenessHrLogs");
         if (existing) arr = JSON.parse(existing);
       } catch (e) {
         arr = [];
@@ -924,7 +914,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "liveness_hr_logs.json";
+      a.download = "encounter_liveness_hr_logs.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -932,7 +922,7 @@
       logStatusEl.textContent = "Exported " + arr.length + " record(s) as JSON.";
     }
 
-    /* Events */
+    /* ---------- EVENT BINDINGS ---------- */
 
     startCameraBtn.addEventListener("click", startCamera);
     stopCameraBtn.addEventListener("click", stopCamera);
