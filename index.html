@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Encounter Liveness & Anti-Deepfake Check</title>
+  <title>Encounter Liveness & Anti-Deepfake Check + Experimental HR (rPPG)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Inline CSS -->
@@ -95,7 +95,7 @@
     .controls {
       margin-top:1rem;
       display:flex;
-      gap:0.75rem;
+      gap:0.5rem;
       justify-content:center;
       flex-wrap:wrap;
     }
@@ -166,6 +166,38 @@
     .info-card p {
       font-size:0.9rem;
       opacity:0.9;
+    }
+
+    /* HR block */
+
+    .hr-block {
+      margin-top:0.8rem;
+      padding-top:0.6rem;
+      border-top:1px solid #262c4a;
+      font-size:0.9rem;
+    }
+
+    .hr-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.4rem;
+    }
+
+    .hr-value {
+      font-weight:bold;
+      font-size:1rem;
+    }
+
+    .hr-status {
+      font-size:0.8rem;
+      opacity:0.85;
+    }
+
+    .hr-warning {
+      font-size:0.75rem;
+      opacity:0.7;
+      margin-top:0.25rem;
     }
 
     /* Governance collapsible */
@@ -330,7 +362,7 @@
 <body>
   <header class="app-header">
     <h1>Encounter Liveness Check</h1>
-    <p>Simple live camera check as an anti-deepfake safety layer.</p>
+    <p>Simple live camera check & experimental camera-based heart rate (rPPG).</p>
   </header>
 
   <main class="app-main">
@@ -347,6 +379,8 @@
         <button id="startCameraBtn">Start camera</button>
         <button id="stopCameraBtn" disabled>Stop camera</button>
         <button id="runLivenessBtn" disabled>Run liveness check</button>
+        <button id="startHRBtn" disabled>Start HR (experimental)</button>
+        <button id="stopHRBtn" disabled>Stop HR</button>
         <button id="helpBtn">Help</button>
       </div>
 
@@ -361,14 +395,28 @@
         </div>
       </div>
 
+      <div class="hr-block">
+        <div class="hr-row">
+          <span>Heart rate (experimental rPPG):</span>
+          <span class="hr-value" id="hrValue">-- bpm</span>
+        </div>
+        <div class="hr-row">
+          <span class="hr-status" id="hrStatus">HR module idle.</span>
+        </div>
+        <p class="hr-warning">
+          This heart-rate function uses experimental camera-based photoplethysmography (rPPG).
+          It is not a medical device and must not be used for diagnosis or treatment decisions.
+        </p>
+      </div>
+
       <div class="disclaimer">
         <p>
-          This liveness & anti-deepfake layer is provided by
-          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (+4915225321568 kronwittener str.1 84367 Tann Bavaria DE).
+          Liveness & rPPG layer provided by
+          <strong>Moustafa Mohammed Elsayed Elsayed Ali</strong> (OFFICE@DASPQW.COM MOSTISCHMIDBAUER@WEB.DE +4915225321568 Kronwittener Str.1 84367 TANN DE).
         </p>
         <p>
           Use only within your organization’s security and data-protection policies; no guarantee of
-          identity by itself.
+          identity or vital-sign accuracy by itself.
         </p>
       </div>
     </section>
@@ -377,9 +425,9 @@
     <section class="info-card">
       <h2>What this app does</h2>
       <p>
-        This app runs a short liveness sequence (head movement tasks) and shows a clear progress bar.
-        It is a minimal testbed for your anti-deepfake concept and can be extended with more advanced
-        checks or backend verification.
+        This app runs a short liveness sequence (head-movement tasks) and offers an experimental
+        camera-based heart rate estimate using remote photoplethysmography (rPPG). All processing
+        runs locally in your browser in this demo.
       </p>
     </section>
 
@@ -395,7 +443,7 @@
         <h3>1. Purpose & Scope</h3>
         <p>
           This module provides a structured <strong>challenge–response liveness check</strong> for remote
-          encounters. It is designed to protect all external stakeholders:
+          encounters and an optional experimental HR (rPPG) signal. It is designed to protect:
         </p>
 
         <ul>
@@ -408,7 +456,8 @@
 
         <p>
           Primary goal: reduce impersonation, replay attacks, and deepfake misuse in telehealth,
-          claims, consent, and remote documentation workflows.
+          claims, consent, and remote documentation workflows. HR (rPPG) is a secondary, optional
+          signal for research and monitoring concepts.
         </p>
 
         <h3>2. Position in Governance Architecture</h3>
@@ -421,6 +470,7 @@
         <p>
           Output is interpreted as:
           <em>“Liveness completed; human-like response detected – requires human or automated review.”</em>
+          HR output is an <strong>experimental signal</strong>, not a clinical vital sign.
         </p>
 
         <h3>3. Privacy & Data Protection</h3>
@@ -434,24 +484,20 @@
         <h3>4. Technical Characteristics</h3>
         <ul>
           <li>Uses <code>getUserMedia</code> for camera access</li>
-          <li>Behavioral prompts: look straight → turn left → turn right → nod</li>
+          <li>Liveness: scripted prompts (look straight → left → right → nod)</li>
+          <li>HR (rPPG): frame sampling of a small facial region, green-channel intensity over time</li>
+          <li>Naive frequency analysis (discrete spectrum) to estimate dominant heart-rate band</li>
           <li>No biometric templates are created in this demo</li>
-          <li>Designed to be extendable with:
-            <ul>
-              <li>Face tracking and landmark analysis</li>
-              <li>Spoof detection (e.g. flat-screen patterns, glare)</li>
-              <li>Backend risk scoring and audit logging</li>
-            </ul>
-          </li>
         </ul>
 
         <h3>5. Stakeholder Risk Controls</h3>
         <ul>
-          <li>Not a full identity or fraud-prevention system</li>
+          <li>Not a full identity, fraud-prevention, or medical monitoring system</li>
           <li>Reduces exposure to basic deepfake / replay risks</li>
           <li>Supports fairer claims handling and telehealth integrity for payors</li>
           <li>Supports governance, AI-risk and cyber-security reporting for boards</li>
           <li>Protects patients from impersonation and misuse of their identity</li>
+          <li>HR (rPPG) is strictly experimental and must not be used for diagnosis or triage</li>
           <li>Must be combined with:
             <ul>
               <li>ID / KYC verification</li>
@@ -464,9 +510,9 @@
         <h3>6. Integration Roadmap</h3>
         <ol>
           <li>Pilot implementation with a defined user/patient/provider group</li>
-          <li>Add a quantitative liveness score (0–100) with computer vision checks</li>
-          <li>Log liveness events in secure backend systems (timestamp, device, score)</li>
-          <li>Attach decision rules to score thresholds (e.g. score &lt; 60 → manual review)</li>
+          <li>Add more robust CV-based liveness scoring (0–100) and rPPG signal quality metrics</li>
+          <li>Log liveness and HR events in secure backend systems (timestamp, device, score)</li>
+          <li>Attach decision rules to liveness/HR thresholds (e.g. score &lt; 60 → manual review)</li>
           <li>Include this module in internal AI, digital-health, and risk documentation</li>
         </ol>
 
@@ -483,25 +529,29 @@
   <div id="helpModal" class="modal hidden">
     <div class="modal-content">
       <button id="closeHelpBtn" class="close-btn">×</button>
-      <h2>User Help – Encounter Liveness Check</h2>
+      <h2>User Help – Encounter Liveness & HR (rPPG)</h2>
 
       <h3>1. Purpose</h3>
-      <p>Confirms that the camera is seeing a live human reacting in real time.</p>
+      <p>
+        Confirms that the camera is seeing a live human reacting in real time and optionally estimates
+        heart rate from subtle color changes in the face (rPPG).
+      </p>
 
       <h3>2. How to use</h3>
       <ol>
         <li>Click “Start camera” and allow access.</li>
-        <li>Position your face with good lighting.</li>
-        <li>Click “Run liveness check”.</li>
-        <li>Follow the instructions on the screen.</li>
-        <li>Click “Stop camera” when finished.</li>
+        <li>Position your face with good, even lighting.</li>
+        <li>Click “Run liveness check” and follow instructions (optional).</li>
+        <li>Click “Start HR (experimental)” and remain still for 20–30 seconds.</li>
+        <li>Read the HR value once status indicates a stable estimate.</li>
+        <li>Click “Stop HR” and “Stop camera” when finished.</li>
       </ol>
 
-      <h3>3. Tips for better readings</h3>
+      <h3>3. Tips for better HR readings</h3>
       <ul>
-        <li>Use a well-lit room; avoid bright light behind you.</li>
-        <li>Place laptop/tablet on a stable surface.</li>
-        <li>Make clear, visible head movements when prompted.</li>
+        <li>Use a well-lit room with light in front of your face, not behind you.</li>
+        <li>Keep your head as still as possible (minimal talking and movement).</li>
+        <li>Avoid strong color changes on the face (makeup, colored lights, etc.).</li>
       </ul>
 
       <h3>4. Data & privacy</h3>
@@ -509,8 +559,8 @@
 
       <h3>5. Disclaimer</h3>
       <p>
-        This is a technical liveness layer. It must be combined with your own identity, KYC, and
-        risk-management procedures. It is not a stand-alone guarantee against deepfakes or fraud.
+        The HR feature is experimental and not a medical device. It must not be used to make
+        clinical decisions or emergency assessments.
       </p>
     </div>
   </div>
@@ -525,6 +575,8 @@
     const startCameraBtn = document.getElementById("startCameraBtn");
     const stopCameraBtn = document.getElementById("stopCameraBtn");
     const runLivenessBtn = document.getElementById("runLivenessBtn");
+    const startHRBtn = document.getElementById("startHRBtn");
+    const stopHRBtn = document.getElementById("stopHRBtn");
     const helpBtn = document.getElementById("helpBtn");
     const closeHelpBtn = document.getElementById("closeHelpBtn");
     const helpModal = document.getElementById("helpModal");
@@ -532,6 +584,9 @@
     const progressBar = document.getElementById("progressBar");
     const overlay = document.getElementById("overlay");
     const overlayText = document.getElementById("overlayText");
+
+    const hrValueEl = document.getElementById("hrValue");
+    const hrStatusEl = document.getElementById("hrStatus");
 
     const governanceToggle = document.getElementById("governanceToggle");
     const governanceBody = document.getElementById("governanceBody");
@@ -552,6 +607,7 @@
         if (startCameraBtn) startCameraBtn.disabled = true;
         if (stopCameraBtn) stopCameraBtn.disabled = false;
         if (runLivenessBtn) runLivenessBtn.disabled = false;
+        if (startHRBtn) startHRBtn.disabled = false;
       } catch (err) {
         console.error(err);
         setStatus("Cannot access camera");
@@ -567,9 +623,14 @@
       if (startCameraBtn) startCameraBtn.disabled = false;
       if (stopCameraBtn) stopCameraBtn.disabled = true;
       if (runLivenessBtn) runLivenessBtn.disabled = true;
+      if (startHRBtn) startHRBtn.disabled = true;
+      if (stopHRBtn) stopHRBtn.disabled = true;
       setStatus("Camera stopped");
       stopLiveness();
+      stopHRMonitoring();
     }
+
+    /* Liveness */
 
     function showOverlay(msg) {
       if (!overlay || !overlayText) return;
@@ -618,11 +679,166 @@
       }, 2500);
     }
 
-    // Attach event listeners only if elements exist
+    /* Experimental HR (rPPG) */
+
+    const HR_MIN_BPM = 42;
+    const HR_MAX_BPM = 180;
+    const HR_SAMPLE_INTERVAL_MS = 80; // ~12.5 Hz
+    const HR_MIN_WINDOW_SEC = 12;     // min 12 seconds of data
+
+    let hrTimer = null;
+    let hrSignal = [];
+    let hrTimestamps = [];
+    const hrCanvas = document.createElement("canvas");
+    const hrCtx = hrCanvas.getContext("2d");
+
+    function resetHRBuffers() {
+      hrSignal = [];
+      hrTimestamps = [];
+    }
+
+    function startHRMonitoring() {
+      if (!stream || !video) {
+        if (hrStatusEl) hrStatusEl.textContent = "Start camera first.";
+        return;
+      }
+      if (hrTimer) return;
+
+      resetHRBuffers();
+      if (hrValueEl) hrValueEl.textContent = "-- bpm";
+      if (hrStatusEl) hrStatusEl.textContent = "Collecting signal… stay still and well lit.";
+      if (startHRBtn) startHRBtn.disabled = true;
+      if (stopHRBtn) stopHRBtn.disabled = false;
+
+      hrTimer = setInterval(sampleHRFrame, HR_SAMPLE_INTERVAL_MS);
+    }
+
+    function stopHRMonitoring() {
+      if (hrTimer) {
+        clearInterval(hrTimer);
+        hrTimer = null;
+      }
+      if (hrStatusEl) hrStatusEl.textContent = "HR module idle.";
+      if (startHRBtn) startHRBtn.disabled = !stream;
+      if (stopHRBtn) stopHRBtn.disabled = true;
+    }
+
+    function sampleHRFrame() {
+      if (!video || video.videoWidth === 0 || video.videoHeight === 0) return;
+
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+
+      // small downscaled ROI in upper-center (forehead/upper face)
+      const roiWidth = Math.floor(w * 0.2);
+      const roiHeight = Math.floor(h * 0.15);
+      const roiX = Math.floor(w * 0.4);
+      const roiY = Math.floor(h * 0.2);
+
+      hrCanvas.width = roiWidth;
+      hrCanvas.height = roiHeight;
+
+      hrCtx.drawImage(video, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
+      const frame = hrCtx.getImageData(0, 0, roiWidth, roiHeight).data;
+
+      let sumG = 0;
+      let count = 0;
+      for (let i = 0; i < frame.length; i += 4) {
+        const g = frame[i + 1];
+        sumG += g;
+        count++;
+      }
+      if (count === 0) return;
+
+      const avgG = sumG / count;
+      const now = performance.now() / 1000; // seconds
+
+      hrSignal.push(avgG);
+      hrTimestamps.push(now);
+
+      // Keep last 25 seconds max to limit computation
+      const maxWindowSec = 25;
+      while (hrTimestamps.length > 0 && (now - hrTimestamps[0]) > maxWindowSec) {
+        hrTimestamps.shift();
+        hrSignal.shift();
+      }
+
+      const duration = hrTimestamps.length > 1 ? (hrTimestamps[hrTimestamps.length - 1] - hrTimestamps[0]) : 0;
+      if (duration >= HR_MIN_WINDOW_SEC) {
+        const hrEstimate = estimateHeartRateFromSignal(hrSignal, hrTimestamps);
+        if (hrEstimate && hrEstimate.quality > 0.25) {
+          if (hrValueEl) hrValueEl.textContent = Math.round(hrEstimate.bpm) + " bpm";
+          if (hrStatusEl) hrStatusEl.textContent = "Stable estimate (quality: " + (hrEstimate.quality * 100).toFixed(0) + "%).";
+        } else if (hrStatusEl) {
+          hrStatusEl.textContent = "Signal weak or noisy. Try better lighting and stay still.";
+        }
+      } else {
+        if (hrStatusEl) {
+          hrStatusEl.textContent = "Collecting signal (" + duration.toFixed(1) + " s)…";
+        }
+      }
+    }
+
+    function estimateHeartRateFromSignal(signal, timestamps) {
+      const N = signal.length;
+      if (N < 30) return null;
+
+      // Detrend: subtract mean
+      let mean = 0;
+      for (let i = 0; i < N; i++) mean += signal[i];
+      mean /= N;
+
+      const x = new Array(N);
+      for (let i = 0; i < N; i++) x[i] = signal[i] - mean;
+
+      // Approximate sampling rate from timestamps
+      const duration = timestamps[N - 1] - timestamps[0];
+      if (duration <= 0) return null;
+      const fs = N / duration;
+
+      const minHz = HR_MIN_BPM / 60;
+      const maxHz = HR_MAX_BPM / 60;
+
+      let bestFreq = 0;
+      let bestAmp = 0;
+      let totalAmp = 0;
+
+      // naive DFT in band
+      for (let k = 1; k < N; k++) {
+        const freq = k * fs / N;
+        if (freq < minHz || freq > maxHz) continue;
+
+        let re = 0;
+        let im = 0;
+        const angFactor = -2 * Math.PI * k / N;
+        for (let n = 0; n < N; n++) {
+          const angle = angFactor * n;
+          re += x[n] * Math.cos(angle);
+          im += x[n] * Math.sin(angle);
+        }
+        const amp = Math.sqrt(re * re + im * im);
+        totalAmp += amp;
+        if (amp > bestAmp) {
+          bestAmp = amp;
+          bestFreq = freq;
+        }
+      }
+
+      if (!bestFreq || bestAmp <= 0 || totalAmp <= 0) return null;
+
+      const bpm = bestFreq * 60;
+      const quality = bestAmp / totalAmp; // 0..1, very rough
+
+      return { bpm, quality };
+    }
+
+    /* Attach events */
 
     if (startCameraBtn) startCameraBtn.addEventListener("click", startCamera);
     if (stopCameraBtn) stopCameraBtn.addEventListener("click", stopCamera);
     if (runLivenessBtn) runLivenessBtn.addEventListener("click", runLiveness);
+    if (startHRBtn) startHRBtn.addEventListener("click", startHRMonitoring);
+    if (stopHRBtn) stopHRBtn.addEventListener("click", stopHRMonitoring);
 
     if (helpBtn && helpModal) {
       helpBtn.addEventListener("click", () => {
@@ -657,4 +873,3 @@
   </script>
 </body>
 </html>
-
