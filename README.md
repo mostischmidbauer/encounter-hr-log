@@ -1,4 +1,4 @@
-# HCP Anti-Deepfake Liveness & Licence Verification Prototype  
+# HCP Anti-Deepfake Liveness & Licence Verification 
 ### A research-only optical-liveness security layer for telehealth, insurers & regulators  
 **Author:** Moustafa Mohammed Elsayed Elsayed Ali  
 **Languages:** EN / DE / ES  
@@ -138,6 +138,26 @@ Moustafa Mohammed Elsayed Elsayed Ali
 📧 agentic@virtualcaresolution.de
 
 📍 Germany
+
+This software, its source code, design, architecture, and all related materials are
+the exclusive intellectual property of **Moustafa Mohammed Elsayed Elsayed Ali**.
+
+No individual, organization, institution, or third party is permitted to copy,
+reproduce, modify, distribute, commercialize, integrate, or use any part of this
+software or its derivatives without explicit written authorization from
+Moustafa Mohammed Elsayed Elsayed Ali.
+
+Any unauthorized use is strictly prohibited and may result in legal action.
+All rights reserved.
+
+Official Contact
+Name: Moustafa Mohammed Elsayed Elsayed Ali
+Address: Kronwittener Strasse 1, 84367 Tann, Germany
+Primary Email: mostischmidbauer@web.de
+Additional Emails: dptmostafa@gmail.com
+                   agentic@virtualcaresolution.de
+                   office@virtualcaresolution.de
+LinkedIn: https://www.linkedin.com/in/moustafa-ali-024471aa/
 
 ### ✨ `/docs/index.html`
 (Professional landing page for GitHub Pages)
